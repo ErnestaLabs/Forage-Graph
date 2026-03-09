@@ -255,7 +255,25 @@ app.get('/stats', async (_req: Request, res: Response) => {
 // ─── START ────────────────────────────────────────────────────────────────────
 
 async function start() {
-  await knowledgeGraph.init();
+  let retries = 0;
+  const maxRetries = 10;
+  
+  while (retries < maxRetries) {
+    try {
+      await knowledgeGraph.init();
+      console.log('FalkorDB initialized successfully');
+      break; // Success
+    } catch (err) {
+      retries++;
+      if (retries >= maxRetries) {
+        console.error('Failed to init FalkorDB after', maxRetries, 'retries:', err);
+        process.exit(1);
+      }
+      const delay = Math.min(1000 * Math.pow(2, retries), 10000);
+      console.log(`Init failed (attempt ${retries}/${maxRetries}), retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
 
   app.listen(PORT, () => {
     console.log(`Forage Graph API running on port ${PORT}`);
