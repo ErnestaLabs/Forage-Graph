@@ -2,6 +2,14 @@
   "name": "Forage Graph \u2014 Master Intelligence Feeds",
   "nodes": [
     {
+      "id": "e5d59bf2-9932-4833-9460-e956876cc687",
+      "name": "Run Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
       "parameters": {
         "rule": {
           "interval": [
@@ -11,1828 +19,1824 @@
             }
           ]
         }
-      },
-      "id": "sched-01",
-      "name": "Run Every 6 Hours",
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.1,
-      "position": [
-        0,
-        0
-      ]
+      }
     },
     {
+      "id": "ad6d33d6-6098-4578-8db9-7f1e9aa7ae9e",
+      "name": "RSS 1: BBC World News",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        0
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f01",
-      "name": "RSS: BBC World News",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        -840
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"BBC World\",\n    category: \"world_news\",\n    entity_type: \"political_event\",\n    causal_weight: 0.4,\n    mechanism: \"news_signal\",\n  }\n}));"
-      },
-      "id": "tag-f01",
-      "name": "Tag: BBC World News",
+      "id": "f702b922-a094-4fbd-9aac-1f13ec6301b3",
+      "name": "Tag 1: BBC World News",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        -840
+        500,
+        0
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"BBC World\";\nconst cat=\"world_news\";\nconst cw=0.4;\nconst mech=\"news_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "5a68ff5e-4133-4b4d-b464-090544f01a8c",
+      "name": "RSS 2: Reuters Top News",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://feeds.reuters.com/reuters/topNews",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f02",
-      "name": "RSS: Reuters Top News",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        -840
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Reuters\",\n    category: \"world_news\",\n    entity_type: \"political_event\",\n    causal_weight: 0.5,\n    mechanism: \"news_signal\",\n  }\n}));"
-      },
-      "id": "tag-f02",
-      "name": "Tag: Reuters Top News",
+      "id": "9c82a701-6a15-4e33-8651-57b27a9a4a94",
+      "name": "Tag 2: Reuters Top News",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        -840
+        820,
+        0
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Reuters\";\nconst cat=\"world_news\";\nconst cw=0.5;\nconst mech=\"news_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "323f379c-000f-4c80-954d-a9f2f0be5b7b",
+      "name": "RSS 3: The Guardian World",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        0
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.theguardian.com/world/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f03",
-      "name": "RSS: The Guardian World",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        -840
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Guardian\",\n    category: \"world_news\",\n    entity_type: \"political_event\",\n    causal_weight: 0.4,\n    mechanism: \"news_signal\",\n  }\n}));"
-      },
-      "id": "tag-f03",
-      "name": "Tag: The Guardian World",
+      "id": "03d9f8cb-a229-4522-b68a-f1204c58cebb",
+      "name": "Tag 3: The Guardian World",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        -840
+        1140,
+        0
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Guardian\";\nconst cat=\"world_news\";\nconst cw=0.4;\nconst mech=\"news_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "eb818057-2a43-47b9-a07d-d894680fe5b3",
+      "name": "RSS 4: Sky News World",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        140
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://feeds.skynews.com/feeds/rss/world.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f04",
-      "name": "RSS: Sky News World",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        -840
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Sky News\",\n    category: \"world_news\",\n    entity_type: \"political_event\",\n    causal_weight: 0.3,\n    mechanism: \"news_signal\",\n  }\n}));"
-      },
-      "id": "tag-f04",
-      "name": "Tag: Sky News World",
+      "id": "c28d5491-2743-4088-8d8c-b91b077bfc0a",
+      "name": "Tag 4: Sky News World",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        -840
+        500,
+        140
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Sky News\";\nconst cat=\"world_news\";\nconst cw=0.3;\nconst mech=\"news_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "0e642873-9906-47ba-addf-42f875f78400",
+      "name": "RSS 5: Foreign Policy",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        140
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://foreignpolicy.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f05",
-      "name": "RSS: Foreign Policy",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        -720
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Foreign Policy\",\n    category: \"geopolitics\",\n    entity_type: \"political_event\",\n    causal_weight: 0.6,\n    mechanism: \"geopolitical_analysis\",\n  }\n}));"
-      },
-      "id": "tag-f05",
-      "name": "Tag: Foreign Policy",
+      "id": "b6bb52ee-b555-4545-a5cf-d1b9a6bbd461",
+      "name": "Tag 5: Foreign Policy",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        -720
+        820,
+        140
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Foreign Policy\";\nconst cat=\"geopolitics\";\nconst cw=0.6;\nconst mech=\"geopolitical_analysis\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "134111af-68c1-4141-b625-8ca7cc6a34e4",
+      "name": "RSS 6: Foreign Affairs",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        140
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.foreignaffairs.com/rss.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f06",
-      "name": "RSS: Foreign Affairs",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        -720
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Foreign Affairs\",\n    category: \"geopolitics\",\n    entity_type: \"political_event\",\n    causal_weight: 0.7,\n    mechanism: \"geopolitical_analysis\",\n  }\n}));"
-      },
-      "id": "tag-f06",
-      "name": "Tag: Foreign Affairs",
+      "id": "1c9c657c-61a2-4852-b66d-fc7a660f3b00",
+      "name": "Tag 6: Foreign Affairs",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        -720
+        1140,
+        140
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Foreign Affairs\";\nconst cat=\"geopolitics\";\nconst cw=0.7;\nconst mech=\"geopolitical_analysis\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "17f2124a-50b5-466e-89e0-7843ce8ce730",
+      "name": "RSS 7: TechCrunch",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        280
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://techcrunch.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f07",
-      "name": "RSS: TechCrunch",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        -720
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"TechCrunch\",\n    category: \"technology\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.4,\n    mechanism: \"tech_signal\",\n  }\n}));"
-      },
-      "id": "tag-f07",
-      "name": "Tag: TechCrunch",
+      "id": "d0bdc7d3-3d64-4d88-b4c6-cca001257aee",
+      "name": "Tag 7: TechCrunch",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        -720
+        500,
+        280
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"TechCrunch\";\nconst cat=\"technology\";\nconst cw=0.4;\nconst mech=\"tech_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "53b437d0-ff1c-4ab6-95fd-ee0de270955c",
+      "name": "RSS 8: TechCrunch Startups",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        280
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://techcrunch.com/category/startups/feed",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f08",
-      "name": "RSS: TechCrunch Startups",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        -720
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"TechCrunch Startups\",\n    category: \"startups\",\n    entity_type: \"company\",\n    causal_weight: 0.5,\n    mechanism: \"startup_signal\",\n  }\n}));"
-      },
-      "id": "tag-f08",
-      "name": "Tag: TechCrunch Startups",
+      "id": "f6d0fbdd-aa82-4b60-8af9-98ced03007b7",
+      "name": "Tag 8: TechCrunch Startups",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        -720
+        820,
+        280
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"TechCrunch Startups\";\nconst cat=\"startups\";\nconst cw=0.5;\nconst mech=\"startup_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "9c23a70b-f40c-42e6-bd3b-3c1a5b23efd9",
+      "name": "RSS 9: TechCrunch Funding",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        280
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://techcrunch.com/tag/funding/feed",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f09",
-      "name": "RSS: TechCrunch Funding",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        -600
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"TechCrunch Funding\",\n    category: \"venture_capital\",\n    entity_type: \"company\",\n    causal_weight: 0.7,\n    mechanism: \"funding_event\",\n  }\n}));"
-      },
-      "id": "tag-f09",
-      "name": "Tag: TechCrunch Funding",
+      "id": "809b3e09-a360-407c-9b7a-d5ec379338eb",
+      "name": "Tag 9: TechCrunch Funding",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        -600
+        1140,
+        280
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"TechCrunch Funding\";\nconst cat=\"venture_capital\";\nconst cw=0.7;\nconst mech=\"funding_event\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "77914f76-7149-4393-b68f-4c5ca1d152cb",
+      "name": "RSS 10: Wired",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        420
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.wired.com/feed/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f10",
-      "name": "RSS: Wired",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        -600
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Wired\",\n    category: \"technology\",\n    entity_type: \"technology\",\n    causal_weight: 0.3,\n    mechanism: \"tech_signal\",\n  }\n}));"
-      },
-      "id": "tag-f10",
-      "name": "Tag: Wired",
+      "id": "a50895e8-5563-4b1e-a1e7-1368b61ac47b",
+      "name": "Tag 10: Wired",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        -600
+        500,
+        420
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Wired\";\nconst cat=\"technology\";\nconst cw=0.3;\nconst mech=\"tech_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "6d93ac47-3671-4115-a6ee-a80a6a202233",
+      "name": "RSS 11: Ars Technica",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        420
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://feeds.arstechnica.com/arstechnica/index",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f11",
-      "name": "RSS: Ars Technica",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        -600
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Ars Technica\",\n    category: \"technology\",\n    entity_type: \"technology\",\n    causal_weight: 0.3,\n    mechanism: \"tech_signal\",\n  }\n}));"
-      },
-      "id": "tag-f11",
-      "name": "Tag: Ars Technica",
+      "id": "2cb05ac0-725f-4f77-804a-73ff13244719",
+      "name": "Tag 11: Ars Technica",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        -600
+        820,
+        420
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Ars Technica\";\nconst cat=\"technology\";\nconst cw=0.3;\nconst mech=\"tech_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "0a730731-fd50-4100-b9f7-c8f60ced7dc8",
+      "name": "RSS 12: MIT Tech Review",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        420
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.technologyreview.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f12",
-      "name": "RSS: MIT Tech Review",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        -600
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"MIT Tech Review\",\n    category: \"ai\",\n    entity_type: \"technology\",\n    causal_weight: 0.5,\n    mechanism: \"research_signal\",\n  }\n}));"
-      },
-      "id": "tag-f12",
-      "name": "Tag: MIT Tech Review",
+      "id": "e7d221eb-80a1-4c6a-8dbb-6e3af275dce6",
+      "name": "Tag 12: MIT Tech Review",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        -600
+        1140,
+        420
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"MIT Tech Review\";\nconst cat=\"ai\";\nconst cw=0.5;\nconst mech=\"research_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "dd9cbeeb-5844-4fcf-9e4a-005035d42edf",
+      "name": "RSS 13: VentureBeat",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        560
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://venturebeat.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f13",
-      "name": "RSS: VentureBeat",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        -480
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"VentureBeat\",\n    category: \"ai\",\n    entity_type: \"technology\",\n    causal_weight: 0.4,\n    mechanism: \"tech_signal\",\n  }\n}));"
-      },
-      "id": "tag-f13",
-      "name": "Tag: VentureBeat",
+      "id": "54ed96c1-a3bb-4562-a88a-a40bc4e1067f",
+      "name": "Tag 13: VentureBeat",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        -480
+        500,
+        560
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"VentureBeat\";\nconst cat=\"ai\";\nconst cw=0.4;\nconst mech=\"tech_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "34aa4fed-916c-4340-86e9-4bb109e589fc",
+      "name": "RSS 14: The Verge",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        560
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.theverge.com/rss/index.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f14",
-      "name": "RSS: The Verge",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        -480
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"The Verge\",\n    category: \"technology\",\n    entity_type: \"technology\",\n    causal_weight: 0.3,\n    mechanism: \"tech_signal\",\n  }\n}));"
-      },
-      "id": "tag-f14",
-      "name": "Tag: The Verge",
+      "id": "6cc4d2a6-0fc1-4e4a-a66d-d5487debb45f",
+      "name": "Tag 14: The Verge",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        -480
+        820,
+        560
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"The Verge\";\nconst cat=\"technology\";\nconst cw=0.3;\nconst mech=\"tech_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "deef8fc7-c6d3-4f23-8dbc-06f2ec0b6437",
+      "name": "RSS 15: Fortune",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        560
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://fortune.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f15",
-      "name": "RSS: Fortune",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        -480
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Fortune\",\n    category: \"business\",\n    entity_type: \"company\",\n    causal_weight: 0.4,\n    mechanism: \"business_signal\",\n  }\n}));"
-      },
-      "id": "tag-f15",
-      "name": "Tag: Fortune",
+      "id": "1f3c56d9-2e17-4b76-a2ba-385cb2bb4c3b",
+      "name": "Tag 15: Fortune",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        -480
+        1140,
+        560
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Fortune\";\nconst cat=\"business\";\nconst cw=0.4;\nconst mech=\"business_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "3a9668cb-6b08-4b24-9d01-164d7cc984a1",
+      "name": "RSS 16: Economist Finance",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        700
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.economist.com/finance-and-economics/rss.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f16",
-      "name": "RSS: Economist Finance",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        -480
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Economist Finance\",\n    category: \"economics\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.6,\n    mechanism: \"macro_signal\",\n  }\n}));"
-      },
-      "id": "tag-f16",
-      "name": "Tag: Economist Finance",
+      "id": "84a4b498-3203-4fce-9189-eea27c164d80",
+      "name": "Tag 16: Economist Finance",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        -480
+        500,
+        700
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Economist Finance\";\nconst cat=\"economics\";\nconst cw=0.6;\nconst mech=\"macro_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "bb030d40-a627-480e-bd75-31595fe690fe",
+      "name": "RSS 17: The Economist",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        700
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.economist.com/rss.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f17",
-      "name": "RSS: The Economist",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        -360
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"The Economist\",\n    category: \"economics\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.6,\n    mechanism: \"macro_signal\",\n  }\n}));"
-      },
-      "id": "tag-f17",
-      "name": "Tag: The Economist",
+      "id": "8615dfac-35ed-4213-872a-0c06a144c173",
+      "name": "Tag 17: The Economist",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        -360
+        820,
+        700
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"The Economist\";\nconst cat=\"economics\";\nconst cw=0.6;\nconst mech=\"macro_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "45938b4d-7af7-4ced-9a6b-e2ec461aacd8",
+      "name": "RSS 18: Inc Magazine",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        700
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://feeds.inc.com/magazine/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f18",
-      "name": "RSS: Inc Magazine",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        -360
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Inc Magazine\",\n    category: \"business\",\n    entity_type: \"company\",\n    causal_weight: 0.3,\n    mechanism: \"business_signal\",\n  }\n}));"
-      },
-      "id": "tag-f18",
-      "name": "Tag: Inc Magazine",
+      "id": "76037241-b9a9-4704-93bc-064e804c40db",
+      "name": "Tag 18: Inc Magazine",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        -360
+        1140,
+        700
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Inc Magazine\";\nconst cat=\"business\";\nconst cw=0.3;\nconst mech=\"business_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "1a2d6be2-0b9a-4872-b9bc-4391927e8d93",
+      "name": "RSS 19: Forbes Business",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        840
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.forbes.com/business/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f19",
-      "name": "RSS: Forbes Business",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        -360
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Forbes Business\",\n    category: \"business\",\n    entity_type: \"company\",\n    causal_weight: 0.4,\n    mechanism: \"business_signal\",\n  }\n}));"
-      },
-      "id": "tag-f19",
-      "name": "Tag: Forbes Business",
+      "id": "51f72ec5-09e5-4a42-aa89-8ed07cd815b5",
+      "name": "Tag 19: Forbes Business",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        -360
+        500,
+        840
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Forbes Business\";\nconst cat=\"business\";\nconst cw=0.4;\nconst mech=\"business_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "a62bffae-f254-4950-a655-b15f353a8cb1",
+      "name": "RSS 20: Business Insider Tech",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        840
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://feeds.businessinsider.com/tech",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f20",
-      "name": "RSS: Business Insider Tech",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        -360
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Business Insider\",\n    category: \"business\",\n    entity_type: \"company\",\n    causal_weight: 0.3,\n    mechanism: \"business_signal\",\n  }\n}));"
-      },
-      "id": "tag-f20",
-      "name": "Tag: Business Insider Tech",
+      "id": "13db6490-8e4d-4de7-b2b6-1cfab646e613",
+      "name": "Tag 20: Business Insider Tech",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        -360
+        820,
+        840
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Business Insider\";\nconst cat=\"business\";\nconst cw=0.3;\nconst mech=\"business_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "19ecaef4-feae-4525-893d-063e52ebfa48",
+      "name": "RSS 21: BLS Price Indicators",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        840
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.bls.gov/feeds/news.release.pfi.htm",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f21",
-      "name": "RSS: BLS Price Indicators",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        -240
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"BLS Indicators\",\n    category: \"economics\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.7,\n    mechanism: \"macro_indicator\",\n  }\n}));"
-      },
-      "id": "tag-f21",
-      "name": "Tag: BLS Price Indicators",
+      "id": "175b4337-a33a-4beb-b621-c01dbc4e4c5d",
+      "name": "Tag 21: BLS Price Indicators",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        -240
+        1140,
+        840
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"BLS Indicators\";\nconst cat=\"economics\";\nconst cw=0.7;\nconst mech=\"macro_indicator\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "b8b429b1-4861-4fc0-b48a-ef529372cd42",
+      "name": "RSS 22: BLS JOLTS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        980
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.bls.gov/feeds/news.release.jolts.htm",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f22",
-      "name": "RSS: BLS JOLTS",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        -240
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"BLS JOLTS\",\n    category: \"hiring\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.6,\n    mechanism: \"labour_market_signal\",\n  }\n}));"
-      },
-      "id": "tag-f22",
-      "name": "Tag: BLS JOLTS",
+      "id": "41c76e80-10ed-4176-85f6-a07583b0cdb4",
+      "name": "Tag 22: BLS JOLTS",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        -240
+        500,
+        980
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"BLS JOLTS\";\nconst cat=\"hiring\";\nconst cw=0.6;\nconst mech=\"labour_market_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "e3c54dfb-a2a9-43b8-8bcd-4a9d8a3b3412",
+      "name": "RSS 23: BLS CPI",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        980
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.bls.gov/feeds/news.release.cpi.htm",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f23",
-      "name": "RSS: BLS CPI",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        -240
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"BLS CPI\",\n    category: \"consumer\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.8,\n    mechanism: \"inflation_signal\",\n  }\n}));"
-      },
-      "id": "tag-f23",
-      "name": "Tag: BLS CPI",
+      "id": "8dad8e83-fe52-4851-acd5-266deba493e8",
+      "name": "Tag 23: BLS CPI",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        -240
+        820,
+        980
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"BLS CPI\";\nconst cat=\"consumer\";\nconst cw=0.8;\nconst mech=\"inflation_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "a50a38f7-c36d-402c-91bf-bce29688b15c",
+      "name": "RSS 24: Federal Reserve",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        980
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.federalreserve.gov/feeds/press_monetary.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f24",
-      "name": "RSS: Federal Reserve",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        -240
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Federal Reserve\",\n    category: \"economics\",\n    entity_type: \"central_bank\",\n    causal_weight: 0.9,\n    mechanism: \"monetary_policy\",\n  }\n}));"
-      },
-      "id": "tag-f24",
-      "name": "Tag: Federal Reserve",
+      "id": "112a27f7-aff5-4eb2-b987-f86f08b76ba1",
+      "name": "Tag 24: Federal Reserve",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        -240
+        1140,
+        980
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Federal Reserve\";\nconst cat=\"economics\";\nconst cw=0.9;\nconst mech=\"monetary_policy\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "88c44e79-baf4-44ec-a24a-e1115a60ca18",
+      "name": "RSS 25: ECB",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        1120
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.ecb.europa.eu/rss/press.html",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f25",
-      "name": "RSS: ECB",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        -120
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"ECB\",\n    category: \"economics\",\n    entity_type: \"central_bank\",\n    causal_weight: 0.9,\n    mechanism: \"monetary_policy\",\n  }\n}));"
-      },
-      "id": "tag-f25",
-      "name": "Tag: ECB",
+      "id": "bf1cfeb2-3360-4563-814b-bd3739c31e27",
+      "name": "Tag 25: ECB",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        -120
+        500,
+        1120
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"ECB\";\nconst cat=\"economics\";\nconst cw=0.9;\nconst mech=\"monetary_policy\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "b63c703b-322f-4329-962b-b056cad4e8d9",
+      "name": "RSS 26: Marginal Revolution",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1120
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://feeds.feedburner.com/marginalrevolution",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f26",
-      "name": "RSS: Marginal Revolution",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        -120
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Marginal Revolution\",\n    category: \"economics\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.4,\n    mechanism: \"macro_signal\",\n  }\n}));"
-      },
-      "id": "tag-f26",
-      "name": "Tag: Marginal Revolution",
+      "id": "2cc89d13-9409-443a-8d8d-b44c8b5a2beb",
+      "name": "Tag 26: Marginal Revolution",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        -120
+        820,
+        1120
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Marginal Revolution\";\nconst cat=\"economics\";\nconst cw=0.4;\nconst mech=\"macro_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "3b011b37-96e2-48e1-a848-f53aba52b8b8",
+      "name": "RSS 27: Project Syndicate",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1120
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.project-syndicate.org/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f27",
-      "name": "RSS: Project Syndicate",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        -120
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Project Syndicate\",\n    category: \"economics\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.5,\n    mechanism: \"macro_signal\",\n  }\n}));"
-      },
-      "id": "tag-f27",
-      "name": "Tag: Project Syndicate",
+      "id": "6b1de565-b2e6-4695-ba0c-e2ea96269dd9",
+      "name": "Tag 27: Project Syndicate",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        -120
+        1140,
+        1120
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Project Syndicate\";\nconst cat=\"economics\";\nconst cw=0.5;\nconst mech=\"macro_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "3c246541-63a8-41cd-971c-ee9c5d429644",
+      "name": "RSS 28: Federal Register",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        1260
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.federalregister.gov/documents/search.rss?conditions[published_on]=today",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f28",
-      "name": "RSS: Federal Register",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        -120
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Federal Register\",\n    category: \"regulation\",\n    entity_type: \"government_body\",\n    causal_weight: 0.7,\n    mechanism: \"regulatory_signal\",\n  }\n}));"
-      },
-      "id": "tag-f28",
-      "name": "Tag: Federal Register",
+      "id": "9021f282-1e7d-4802-ba36-ac321d3b2ea3",
+      "name": "Tag 28: Federal Register",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        -120
+        500,
+        1260
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Federal Register\";\nconst cat=\"regulation\";\nconst cw=0.7;\nconst mech=\"regulatory_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "bbbd61e2-2f17-4b70-b6bd-077eaa247858",
+      "name": "RSS 29: UK Legislation",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1260
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.legislation.gov.uk/ukpga/data.feed",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f29",
-      "name": "RSS: UK Legislation",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        0
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"UK Legislation\",\n    category: \"law\",\n    entity_type: \"government_body\",\n    causal_weight: 0.7,\n    mechanism: \"regulatory_signal\",\n  }\n}));"
-      },
-      "id": "tag-f29",
-      "name": "Tag: UK Legislation",
+      "id": "eeee0fae-51f3-4f0e-9203-170272e340f6",
+      "name": "Tag 29: UK Legislation",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        0
+        820,
+        1260
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"UK Legislation\";\nconst cat=\"law\";\nconst cw=0.7;\nconst mech=\"regulatory_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "d1983433-54f7-45a2-9b5c-8bfe3db61ed9",
+      "name": "RSS 30: EUR-Lex",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1260
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://eur-lex.europa.eu/rss/en/oj_latest-l.rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f30",
-      "name": "RSS: EUR-Lex",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        0
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"EUR-Lex\",\n    category: \"regulation\",\n    entity_type: \"government_body\",\n    causal_weight: 0.7,\n    mechanism: \"regulatory_signal\",\n  }\n}));"
-      },
-      "id": "tag-f30",
-      "name": "Tag: EUR-Lex",
+      "id": "7a420ccb-9489-40a9-92b3-f54668dc1ae7",
+      "name": "Tag 30: EUR-Lex",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        0
+        1140,
+        1260
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"EUR-Lex\";\nconst cat=\"regulation\";\nconst cw=0.7;\nconst mech=\"regulatory_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "2d704f9e-41af-4469-84ec-a0f860a306f6",
+      "name": "RSS 31: DataBreaches.net",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        1400
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.databreaches.net/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f31",
-      "name": "RSS: DataBreaches.net",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        0
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"DataBreaches.net\",\n    category: \"cybersecurity\",\n    entity_type: \"conflict_event\",\n    causal_weight: 0.6,\n    mechanism: \"cyber_threat\",\n  }\n}));"
-      },
-      "id": "tag-f31",
-      "name": "Tag: DataBreaches.net",
+      "id": "394c05a3-3f7a-4ebc-ada7-54749ebcc7f3",
+      "name": "Tag 31: DataBreaches.net",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        0
+        500,
+        1400
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"DataBreaches.net\";\nconst cat=\"cybersecurity\";\nconst cw=0.6;\nconst mech=\"cyber_threat\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "7ea79a3f-d85e-4fa4-a658-c0bac612ed4f",
+      "name": "RSS 32: UpGuard Breaches",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1400
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.upguard.com/breaches/rss.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f32",
-      "name": "RSS: UpGuard Breaches",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        0
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"UpGuard\",\n    category: \"cybersecurity\",\n    entity_type: \"conflict_event\",\n    causal_weight: 0.6,\n    mechanism: \"cyber_threat\",\n  }\n}));"
-      },
-      "id": "tag-f32",
-      "name": "Tag: UpGuard Breaches",
+      "id": "f23df5e8-2eb5-4a46-ae5e-4b004ede7f07",
+      "name": "Tag 32: UpGuard Breaches",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        0
+        820,
+        1400
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"UpGuard\";\nconst cat=\"cybersecurity\";\nconst cw=0.6;\nconst mech=\"cyber_threat\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "7be8af53-f691-4b7c-9e62-994a73d8c96d",
+      "name": "RSS 33: Cooley M&A",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1400
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://cooleyma.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f33",
-      "name": "RSS: Cooley M&A",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        120
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Cooley M&A\",\n    category: \"mergers_acquisitions\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.8,\n    mechanism: \"ma_signal\",\n  }\n}));"
-      },
-      "id": "tag-f33",
-      "name": "Tag: Cooley M&A",
+      "id": "6e4d6e4d-f812-461e-8fb4-6062ee7ce555",
+      "name": "Tag 33: Cooley M&A",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        120
+        1140,
+        1400
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Cooley M&A\";\nconst cat=\"mergers_acquisitions\";\nconst cw=0.8;\nconst mech=\"ma_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "e38da23f-340f-40ae-9403-c7f5ca5e77a4",
+      "name": "RSS 34: DealRoom",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        1540
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://dealroom.net/blog/rss.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f34",
-      "name": "RSS: DealRoom",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        120
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"DealRoom\",\n    category: \"mergers_acquisitions\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.8,\n    mechanism: \"ma_signal\",\n  }\n}));"
-      },
-      "id": "tag-f34",
-      "name": "Tag: DealRoom",
+      "id": "0b9a65fa-66d8-4a19-904b-31f6ca9321ef",
+      "name": "Tag 34: DealRoom",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        120
+        500,
+        1540
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"DealRoom\";\nconst cat=\"mergers_acquisitions\";\nconst cw=0.8;\nconst mech=\"ma_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "6e44e37b-88fa-4ed9-bc7a-6a05b3018615",
+      "name": "RSS 35: arXiv CS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1540
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://export.arxiv.org/rss/cs",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f35",
-      "name": "RSS: arXiv CS",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        120
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"arXiv CS\",\n    category: \"research\",\n    entity_type: \"technology\",\n    causal_weight: 0.4,\n    mechanism: \"research_signal\",\n  }\n}));"
-      },
-      "id": "tag-f35",
-      "name": "Tag: arXiv CS",
+      "id": "8c2f01ac-2da9-4767-b966-9ef54c989c8a",
+      "name": "Tag 35: arXiv CS",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        120
+        820,
+        1540
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"arXiv CS\";\nconst cat=\"research\";\nconst cw=0.4;\nconst mech=\"research_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "dae15f36-4e26-4ed9-9d1c-f2478494714a",
+      "name": "RSS 36: arXiv Economics",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1540
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://export.arxiv.org/rss/econ",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f36",
-      "name": "RSS: arXiv Economics",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        120
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"arXiv Economics\",\n    category: \"research\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.4,\n    mechanism: \"research_signal\",\n  }\n}));"
-      },
-      "id": "tag-f36",
-      "name": "Tag: arXiv Economics",
+      "id": "615f6891-d8d7-471b-803a-88068318ce46",
+      "name": "Tag 36: arXiv Economics",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        120
+        1140,
+        1540
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"arXiv Economics\";\nconst cat=\"research\";\nconst cw=0.4;\nconst mech=\"research_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "6c74157c-3187-49f6-83f7-928dbb15433c",
+      "name": "RSS 37: arXiv ML",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        1680
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://export.arxiv.org/rss/stat.ML",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f37",
-      "name": "RSS: arXiv ML",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        240
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"arXiv ML\",\n    category: \"ai\",\n    entity_type: \"technology\",\n    causal_weight: 0.5,\n    mechanism: \"research_signal\",\n  }\n}));"
-      },
-      "id": "tag-f37",
-      "name": "Tag: arXiv ML",
+      "id": "22c3b6d2-a83c-446b-9bc0-8e1e9cd7c031",
+      "name": "Tag 37: arXiv ML",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        240
+        500,
+        1680
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"arXiv ML\";\nconst cat=\"ai\";\nconst cw=0.5;\nconst mech=\"research_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "d1c3948e-7c31-4291-b4dc-fc2ecfc60796",
+      "name": "RSS 38: arXiv Biology",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1680
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://export.arxiv.org/rss/q-bio",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f38",
-      "name": "RSS: arXiv Biology",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        240
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"arXiv Biology\",\n    category: \"biotech\",\n    entity_type: \"technology\",\n    causal_weight: 0.4,\n    mechanism: \"research_signal\",\n  }\n}));"
-      },
-      "id": "tag-f38",
-      "name": "Tag: arXiv Biology",
+      "id": "cb087a1e-18ca-4f9f-9a80-d42db0028693",
+      "name": "Tag 38: arXiv Biology",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        240
+        820,
+        1680
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"arXiv Biology\";\nconst cat=\"biotech\";\nconst cw=0.4;\nconst mech=\"research_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "b5d130f4-92ba-4e3f-b561-4d4ec9d1e27c",
+      "name": "RSS 39: HubSpot Marketing",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1680
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://blog.hubspot.com/marketing/rss.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f39",
-      "name": "RSS: HubSpot Marketing",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        240
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"HubSpot Marketing\",\n    category: \"marketing\",\n    entity_type: \"company\",\n    causal_weight: 0.2,\n    mechanism: \"market_signal\",\n  }\n}));"
-      },
-      "id": "tag-f39",
-      "name": "Tag: HubSpot Marketing",
+      "id": "3eeab5ee-77d5-49af-b390-2b247d855909",
+      "name": "Tag 39: HubSpot Marketing",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        240
+        1140,
+        1680
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"HubSpot Marketing\";\nconst cat=\"marketing\";\nconst cw=0.2;\nconst mech=\"market_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "92c5e953-868f-4ddb-bb79-8eca273bfeba",
+      "name": "RSS 40: HubSpot Sales",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        1820
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://blog.hubspot.com/sales/rss.xml",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f40",
-      "name": "RSS: HubSpot Sales",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        240
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"HubSpot Sales\",\n    category: \"sales\",\n    entity_type: \"company\",\n    causal_weight: 0.2,\n    mechanism: \"market_signal\",\n  }\n}));"
-      },
-      "id": "tag-f40",
-      "name": "Tag: HubSpot Sales",
+      "id": "fbd389b7-ff6b-4178-9075-60ba873e735f",
+      "name": "Tag 40: HubSpot Sales",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        240
+        500,
+        1820
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"HubSpot Sales\";\nconst cat=\"sales\";\nconst cw=0.2;\nconst mech=\"market_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "b056f5c6-03bd-4bc1-8103-4af37a008071",
+      "name": "RSS 41: Neil Patel",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1820
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://neilpatel.com/blog/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f41",
-      "name": "RSS: Neil Patel",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        360
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Neil Patel\",\n    category: \"marketing\",\n    entity_type: \"company\",\n    causal_weight: 0.2,\n    mechanism: \"market_signal\",\n  }\n}));"
-      },
-      "id": "tag-f41",
-      "name": "Tag: Neil Patel",
+      "id": "18eaa83e-f8fb-4cd1-bfc5-0aafec3f820c",
+      "name": "Tag 41: Neil Patel",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        360
+        820,
+        1820
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Neil Patel\";\nconst cat=\"marketing\";\nconst cw=0.2;\nconst mech=\"market_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "95a209e5-0318-4359-9bc8-91850e7d075d",
+      "name": "RSS 42: Sales Hacker",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1820
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.saleshacker.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f42",
-      "name": "RSS: Sales Hacker",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        360
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Sales Hacker\",\n    category: \"sales\",\n    entity_type: \"company\",\n    causal_weight: 0.2,\n    mechanism: \"market_signal\",\n  }\n}));"
-      },
-      "id": "tag-f42",
-      "name": "Tag: Sales Hacker",
+      "id": "406b34ff-56ca-4f39-af84-d25887e6a1de",
+      "name": "Tag 42: Sales Hacker",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        360
+        1140,
+        1820
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Sales Hacker\";\nconst cat=\"sales\";\nconst cw=0.2;\nconst mech=\"market_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "4cd723a7-4cf2-464b-b59d-3df1383ddd3e",
+      "name": "RSS 43: Gong Blog",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        1960
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://blog.gong.io/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f43",
-      "name": "RSS: Gong Blog",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        360
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Gong\",\n    category: \"sales\",\n    entity_type: \"company\",\n    causal_weight: 0.2,\n    mechanism: \"market_signal\",\n  }\n}));"
-      },
-      "id": "tag-f43",
-      "name": "Tag: Gong Blog",
+      "id": "09c398cc-d683-4c36-8758-fff770a0baca",
+      "name": "Tag 43: Gong Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        360
+        500,
+        1960
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Gong\";\nconst cat=\"sales\";\nconst cw=0.2;\nconst mech=\"market_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "140b4ae1-942f-4b1d-a335-bebaaf19d293",
+      "name": "RSS 44: Close CRM Blog",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1960
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://blog.close.com/rss/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f44",
-      "name": "RSS: Close CRM Blog",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        360
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Close CRM\",\n    category: \"sales\",\n    entity_type: \"company\",\n    causal_weight: 0.2,\n    mechanism: \"market_signal\",\n  }\n}));"
-      },
-      "id": "tag-f44",
-      "name": "Tag: Close CRM Blog",
+      "id": "d252c082-cdf4-4a22-94d5-f02604fd03b9",
+      "name": "Tag 44: Close CRM Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        360
+        820,
+        1960
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Close CRM\";\nconst cat=\"sales\";\nconst cw=0.2;\nconst mech=\"market_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "75d1edd1-78bb-4b07-9134-5431b289a49d",
+      "name": "RSS 45: Psychology Today",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1960
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.psychologytoday.com/intl/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f45",
-      "name": "RSS: Psychology Today",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        480
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Psychology Today\",\n    category: \"psychology\",\n    entity_type: \"social_movement\",\n    causal_weight: 0.2,\n    mechanism: \"social_signal\",\n  }\n}));"
-      },
-      "id": "tag-f45",
-      "name": "Tag: Psychology Today",
+      "id": "75f9b859-b4cf-4b9f-8a75-c989325bfb89",
+      "name": "Tag 45: Psychology Today",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        480
+        1140,
+        1960
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Psychology Today\";\nconst cat=\"psychology\";\nconst cw=0.2;\nconst mech=\"social_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "2fb1a858-507e-4c6c-9bdb-cd1225101448",
+      "name": "RSS 46: Behavioral Scientist",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        2100
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://behavioralscientist.org/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f46",
-      "name": "RSS: Behavioral Scientist",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        480
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Behavioral Scientist\",\n    category: \"psychology\",\n    entity_type: \"social_movement\",\n    causal_weight: 0.3,\n    mechanism: \"social_signal\",\n  }\n}));"
-      },
-      "id": "tag-f46",
-      "name": "Tag: Behavioral Scientist",
+      "id": "1a6fdd82-4486-4084-8850-d2b66fcf7f0c",
+      "name": "Tag 46: Behavioral Scientist",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        480
+        500,
+        2100
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Behavioral Scientist\";\nconst cat=\"psychology\";\nconst cw=0.3;\nconst mech=\"social_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "bfd7c901-128c-4900-9206-49c123563089",
+      "name": "RSS 47: Scientific American",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        2100
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.scientificamerican.com/feed/category/the-sciences",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f47",
-      "name": "RSS: Scientific American",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        480
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Scientific American\",\n    category: \"science\",\n    entity_type: \"technology\",\n    causal_weight: 0.3,\n    mechanism: \"research_signal\",\n  }\n}));"
-      },
-      "id": "tag-f47",
-      "name": "Tag: Scientific American",
+      "id": "2031f988-2593-43f6-b15c-64b18495d09f",
+      "name": "Tag 47: Scientific American",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        480
+        820,
+        2100
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Scientific American\";\nconst cat=\"science\";\nconst cw=0.3;\nconst mech=\"research_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "a4833df8-fa2f-414f-9fa8-c1a70a4a7167",
+      "name": "RSS 48: Crunchbase News",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        2100
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://news.crunchbase.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f48",
-      "name": "RSS: Crunchbase News",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        480
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Crunchbase News\",\n    category: \"venture_capital\",\n    entity_type: \"company\",\n    causal_weight: 0.7,\n    mechanism: \"funding_event\",\n  }\n}));"
-      },
-      "id": "tag-f48",
-      "name": "Tag: Crunchbase News",
+      "id": "8811564d-9c48-4651-991f-8b2f23618e8b",
+      "name": "Tag 48: Crunchbase News",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        480
+        1140,
+        2100
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Crunchbase News\";\nconst cat=\"venture_capital\";\nconst cw=0.7;\nconst mech=\"funding_event\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "c6601f10-c96b-4afc-b2bb-3466edfe0242",
+      "name": "RSS 49: a16z Blog",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        2240
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://a16z.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f49",
-      "name": "RSS: a16z Blog",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        600
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"a16z\",\n    category: \"venture_capital\",\n    entity_type: \"company\",\n    causal_weight: 0.6,\n    mechanism: \"funding_event\",\n  }\n}));"
-      },
-      "id": "tag-f49",
-      "name": "Tag: a16z Blog",
+      "id": "b0d9f885-c22b-4eb5-836a-11c305980864",
+      "name": "Tag 49: a16z Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        600
+        500,
+        2240
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"a16z\";\nconst cat=\"venture_capital\";\nconst cw=0.6;\nconst mech=\"funding_event\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "31a6487e-66f9-4fc2-ba3f-dd58e67609f8",
+      "name": "RSS 50: Y Combinator Blog",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        2240
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.ycombinator.com/blog/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f50",
-      "name": "RSS: Y Combinator Blog",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        600
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Y Combinator\",\n    category: \"startups\",\n    entity_type: \"company\",\n    causal_weight: 0.7,\n    mechanism: \"startup_signal\",\n  }\n}));"
-      },
-      "id": "tag-f50",
-      "name": "Tag: Y Combinator Blog",
+      "id": "dec5ac75-5237-4e83-98d4-6c81451aa053",
+      "name": "Tag 50: Y Combinator Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        600
+        820,
+        2240
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Y Combinator\";\nconst cat=\"startups\";\nconst cw=0.7;\nconst mech=\"startup_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "f9103504-11d1-43bd-a334-fa7b46b6899d",
+      "name": "RSS 51: MIT Sloan Review",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        2240
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://sloanreview.mit.edu/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f51",
-      "name": "RSS: MIT Sloan Review",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        600
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"MIT Sloan\",\n    category: \"management\",\n    entity_type: \"company\",\n    causal_weight: 0.3,\n    mechanism: \"management_signal\",\n  }\n}));"
-      },
-      "id": "tag-f51",
-      "name": "Tag: MIT Sloan Review",
+      "id": "a09bff7f-f7a4-4868-adc6-b091db17e1b4",
+      "name": "Tag 51: MIT Sloan Review",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        600
+        1140,
+        2240
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"MIT Sloan\";\nconst cat=\"management\";\nconst cw=0.3;\nconst mech=\"management_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "44d76b45-8faf-4582-bb14-13ccb1464f74",
+      "name": "RSS 52: McKinsey Insights",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        2380
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.mckinsey.com/feeds/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f52",
-      "name": "RSS: McKinsey Insights",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        600
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"McKinsey\",\n    category: \"management\",\n    entity_type: \"company\",\n    causal_weight: 0.4,\n    mechanism: \"management_signal\",\n  }\n}));"
-      },
-      "id": "tag-f52",
-      "name": "Tag: McKinsey Insights",
+      "id": "a1a71351-3d17-4644-bc5e-6fd7aa40433d",
+      "name": "Tag 52: McKinsey Insights",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        600
+        500,
+        2380
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"McKinsey\";\nconst cat=\"management\";\nconst cw=0.4;\nconst mech=\"management_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "e15e6da6-7da0-46ac-b13f-6a522bd39baa",
+      "name": "RSS 53: OPEC",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        2380
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.opec.org/opec_web/en/pressroom.rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f53",
-      "name": "RSS: OPEC",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        720
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"OPEC\",\n    category: \"energy\",\n    entity_type: \"commodity_flow\",\n    causal_weight: 0.8,\n    mechanism: \"energy_supply_signal\",\n  }\n}));"
-      },
-      "id": "tag-f53",
-      "name": "Tag: OPEC",
+      "id": "7d8bec5d-b3eb-45c0-b0e5-eefa2763775d",
+      "name": "Tag 53: OPEC",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        720
+        820,
+        2380
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"OPEC\";\nconst cat=\"energy\";\nconst cw=0.8;\nconst mech=\"energy_supply_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "0008104f-8e79-4a68-9749-e2076d82cdb6",
+      "name": "RSS 54: Responsible Investor",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        2380
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.responsible-investor.com/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f54",
-      "name": "RSS: Responsible Investor",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        560,
-        720
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Responsible Investor\",\n    category: \"esg\",\n    entity_type: \"economic_event\",\n    causal_weight: 0.4,\n    mechanism: \"esg_signal\",\n  }\n}));"
-      },
-      "id": "tag-f54",
-      "name": "Tag: Responsible Investor",
+      "id": "697a1685-8906-4403-ad95-9f4f149e58e8",
+      "name": "Tag 54: Responsible Investor",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        700,
-        720
+        1140,
+        2380
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Responsible Investor\";\nconst cat=\"esg\";\nconst cw=0.4;\nconst mech=\"esg_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "af7f44e1-0154-4f18-ad95-47b4fb034c27",
+      "name": "RSS 55: CoinTelegraph",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        340,
+        2520
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://cointelegraph.com/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f55",
-      "name": "RSS: CoinTelegraph",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        840,
-        720
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"CoinTelegraph\",\n    category: \"crypto\",\n    entity_type: \"financial_instrument\",\n    causal_weight: 0.5,\n    mechanism: \"crypto_signal\",\n  }\n}));"
-      },
-      "id": "tag-f55",
-      "name": "Tag: CoinTelegraph",
+      "id": "5630f00f-a529-4ca6-a805-9dbd94f1d12a",
+      "name": "Tag 55: CoinTelegraph",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        980,
-        720
+        500,
+        2520
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"CoinTelegraph\";\nconst cat=\"crypto\";\nconst cw=0.5;\nconst mech=\"crypto_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "6432676c-af13-4078-b435-db4d6f6ea2c5",
+      "name": "RSS 56: Supply Chain Digital",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        660,
+        2520
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://www.supplychaindigital.com/rss",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f56",
-      "name": "RSS: Supply Chain Digital",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        720
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Supply Chain Digital\",\n    category: \"supply_chain\",\n    entity_type: \"supply_chain\",\n    causal_weight: 0.6,\n    mechanism: \"supply_chain_signal\",\n  }\n}));"
-      },
-      "id": "tag-f56",
-      "name": "Tag: Supply Chain Digital",
+      "id": "a0390c6f-ff61-4034-8cf1-5029ad254287",
+      "name": "Tag 56: Supply Chain Digital",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        720
+        820,
+        2520
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Supply Chain Digital\";\nconst cat=\"supply_chain\";\nconst cw=0.6;\nconst mech=\"supply_chain_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
+      "id": "649fb001-1f4a-45d9-9634-88fc6faefcfe",
+      "name": "RSS 57: Hootsuite Blog",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        980,
+        2520
+      ],
+      "continueOnFail": true,
       "parameters": {
         "url": "https://blog.hootsuite.com/feed/",
         "options": {
           "timeout": 15000
         }
-      },
-      "id": "f57",
-      "name": "RSS: Hootsuite Blog",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        280,
-        840
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    source: \"Hootsuite\",\n    category: \"marketing\",\n    entity_type: \"company\",\n    causal_weight: 0.2,\n    mechanism: \"market_signal\",\n  }\n}));"
-      },
-      "id": "tag-f57",
-      "name": "Tag: Hootsuite Blog",
+      "id": "4450c2ad-01cb-4419-b06c-7c30104cd0e0",
+      "name": "Tag 57: Hootsuite Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        420,
-        840
+        1140,
+        2520
       ],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "parameters": {
+        "jsCode": "const src=\"Hootsuite\";\nconst cat=\"marketing\";\nconst cw=0.2;\nconst mech=\"market_signal\";\nreturn $input.all().map(i => ({json:{...i.json,source:src,category:cat,causal_weight:cw,mechanism:mech}}));"
+      }
     },
     {
-      "parameters": {
-        "mode": "append",
-        "clashHandling": {
-          "values": {
-            "resolveClash": "addSuffix"
-          }
-        }
-      },
-      "id": "merge-01",
+      "id": "a30b4d12-b973-422e-b2fb-d9734a9c0e3a",
       "name": "Merge All Feeds",
       "type": "n8n-nodes-base.merge",
-      "typeVersion": 3,
+      "typeVersion": 2.1,
       "position": [
-        1680,
-        0
-      ]
+        1500,
+        1330
+      ],
+      "parameters": {
+        "mode": "append"
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nconst results = [];\n\nconst CATEGORY_TO_TYPE = {\n  world_news: 'political_event',\n  geopolitics: 'political_event',\n  technology: 'technology',\n  ai: 'technology',\n  startups: 'company',\n  venture_capital: 'company',\n  business: 'company',\n  economics: 'economic_event',\n  hiring: 'economic_event',\n  consumer: 'economic_event',\n  regulation: 'government_body',\n  law: 'government_body',\n  cybersecurity: 'conflict_event',\n  mergers_acquisitions: 'economic_event',\n  research: 'technology',\n  biotech: 'technology',\n  marketing: 'company',\n  sales: 'company',\n  management: 'company',\n  psychology: 'social_movement',\n  science: 'technology',\n  energy: 'commodity_flow',\n  esg: 'economic_event',\n  crypto: 'financial_instrument',\n  supply_chain: 'supply_chain',\n};\n\nconst CATEGORY_TO_CAUSAL = {\n  world_news:           { causal_weight: 0.4, mechanism: 'news_signal' },\n  geopolitics:          { causal_weight: 0.6, mechanism: 'geopolitical_analysis' },\n  technology:           { causal_weight: 0.3, mechanism: 'tech_signal' },\n  ai:                   { causal_weight: 0.5, mechanism: 'tech_signal' },\n  startups:             { causal_weight: 0.5, mechanism: 'startup_signal' },\n  venture_capital:      { causal_weight: 0.7, mechanism: 'funding_event' },\n  business:             { causal_weight: 0.4, mechanism: 'business_signal' },\n  economics:            { causal_weight: 0.6, mechanism: 'macro_signal' },\n  hiring:               { causal_weight: 0.6, mechanism: 'labour_market_signal' },\n  consumer:             { causal_weight: 0.8, mechanism: 'inflation_signal' },\n  regulation:           { causal_weight: 0.7, mechanism: 'regulatory_signal' },\n  law:                  { causal_weight: 0.7, mechanism: 'regulatory_signal' },\n  cybersecurity:        { causal_weight: 0.6, mechanism: 'cyber_threat' },\n  mergers_acquisitions: { causal_weight: 0.8, mechanism: 'ma_signal' },\n  research:             { causal_weight: 0.4, mechanism: 'research_signal' },\n  biotech:              { causal_weight: 0.4, mechanism: 'research_signal' },\n  energy:               { causal_weight: 0.8, mechanism: 'energy_supply_signal' },\n  crypto:               { causal_weight: 0.5, mechanism: 'crypto_signal' },\n  supply_chain:         { causal_weight: 0.6, mechanism: 'supply_chain_signal' },\n};\n\n// Extract named entities from text (simple heuristic: capitalised multi-word phrases)\nfunction extractMentions(text) {\n  const matches = text.match(/\\b([A-Z][a-z]+ (?:[A-Z][a-z]+ ?){0,2})\\b/g) || [];\n  return [...new Set(matches)].slice(0, 5);\n}\n\nfor (const item of items) {\n  const a = item.json;\n  if (!a.title || !a.source) continue;\n\n  const title = a.title.trim();\n  const category = a.category || 'world_news';\n  const source = a.source;\n  const url = a.link || a.url || '';\n  const published = a.pubDate || a.isoDate || new Date().toISOString();\n\n  const description = (a.content || a.contentSnippet || a.summary || '')\n    .replace(/<[^>]*>/g, '')\n    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '\"')\n    .substring(0, 800);\n\n  const entityType = CATEGORY_TO_TYPE[category] || 'political_event';\n  const causal = CATEGORY_TO_CAUSAL[category] || { causal_weight: 0.3, mechanism: 'news_signal' };\n\n  // Build relationships: link to the source organisation and any mentioned entities\n  const relationships = [\n    {\n      targetName: source,\n      targetType: 'company',\n      targetProperties: { domain: 'media', category },\n      relation: 'cited_by',\n      confidence: 0.9,\n      causal_weight: 0.1,\n      mechanism: 'media_attribution',\n    }\n  ];\n\n  // Extract mentioned organisations/people and link them\n  const mentions = extractMentions(title + ' ' + description.substring(0, 200));\n  for (const mention of mentions) {\n    if (mention === title.substring(0, mention.length)) continue; // skip self\n    relationships.push({\n      targetName: mention,\n      targetType: 'person',\n      relation: 'related_to',\n      confidence: 0.4,\n      causal_weight: causal.causal_weight * 0.5,\n      mechanism: causal.mechanism,\n    });\n  }\n\n  results.push({\n    json: {\n      name: title.substring(0, 200),\n      type: entityType,\n      properties: {\n        url,\n        description: description.substring(0, 500),\n        category,\n        published,\n      },\n      relationships,\n      source,\n      confidence: 0.7,\n      causal_weight: causal.causal_weight,\n      mechanism: causal.mechanism,\n    }\n  });\n}\n\nreturn results.length > 0 ? results : [{ json: null }];"
-      },
-      "id": "norm-01",
+      "id": "ecd58a2f-dcbb-419b-9263-7033807dd5e7",
       "name": "Normalize to Graph Entities",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1960,
-        0
-      ]
+        1800,
+        1330
+      ],
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst results = [];\n\nconst TYPE_MAP = {\n  world_news: 'political_event', geopolitics: 'political_event',\n  technology: 'technology', ai: 'technology', biotech: 'technology',\n  research: 'technology', science: 'technology',\n  startups: 'company', venture_capital: 'company', business: 'company',\n  marketing: 'company', sales: 'company', management: 'company',\n  economics: 'economic_event', hiring: 'economic_event', consumer: 'economic_event',\n  mergers_acquisitions: 'economic_event', esg: 'economic_event',\n  regulation: 'government_body', law: 'government_body',\n  cybersecurity: 'conflict_event',\n  energy: 'commodity_flow',\n  crypto: 'financial_instrument',\n  supply_chain: 'supply_chain',\n  psychology: 'social_movement',\n};\n\nfunction extractMentions(text) {\n  const matches = text.match(/\\b([A-Z][a-z]+(?: [A-Z][a-z]+){1,3})\\b/g) || [];\n  return [...new Set(matches)].slice(0, 4);\n}\n\nfor (const item of items) {\n  const a = item.json;\n  if (!a || !a.title || !a.source) continue;\n\n  const title = String(a.title).trim().substring(0, 200);\n  const category = a.category || 'world_news';\n  const source = a.source;\n  const url = a.link || a.url || '';\n  const published = a.pubDate || a.isoDate || new Date().toISOString();\n  const causal_weight = typeof a.causal_weight === 'number' ? a.causal_weight : 0.3;\n  const mechanism = a.mechanism || 'news_signal';\n\n  const description = String(a.content || a.contentSnippet || a.summary || '')\n    .replace(/<[^>]*>/g, '')\n    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '\"')\n    .substring(0, 600);\n\n  const entityType = TYPE_MAP[category] || 'political_event';\n\n  const relationships = [{\n    targetName: source,\n    targetType: 'company',\n    targetProperties: { domain: 'media', category },\n    relation: 'cited_by',\n    confidence: 0.9,\n    causal_weight: 0.1,\n    mechanism: 'media_attribution'\n  }];\n\n  const mentions = extractMentions(title + ' ' + description.substring(0, 200));\n  for (const mention of mentions) {\n    relationships.push({\n      targetName: mention,\n      targetType: 'person',\n      relation: 'related_to',\n      confidence: 0.4,\n      causal_weight: causal_weight * 0.5,\n      mechanism\n    });\n  }\n\n  results.push({ json: {\n    name: title,\n    type: entityType,\n    properties: { url, description: description.substring(0, 500), category, published },\n    relationships,\n    source,\n    confidence: 0.7,\n    causal_weight,\n    mechanism\n  }});\n}\n\nreturn results.length > 0 ? results : [{ json: null }];"
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all().filter(i => i.json !== null);\nconst BATCH_SIZE = 25;\nconst batches = [];\n\nfor (let i = 0; i < items.length; i += BATCH_SIZE) {\n  const batch = items.slice(i, i + BATCH_SIZE).map(item => item.json);\n  batches.push({ json: { batch } });\n}\n\nreturn batches.length > 0 ? batches : [{ json: { batch: [] } }];"
-      },
-      "id": "batch-01",
-      "name": "Batch (25 items)",
+      "id": "6fe2b9b5-fde9-40f1-b450-42febb3b112e",
+      "name": "Batch 25 Items",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2240,
-        0
-      ]
+        2100,
+        1330
+      ],
+      "parameters": {
+        "jsCode": "const items = $input.all().filter(i => i.json !== null && i.json !== undefined);\nconst BATCH_SIZE = 25;\nconst batches = [];\nfor (let i = 0; i < items.length; i += BATCH_SIZE) {\n  batches.push({ json: { batch: items.slice(i, i + BATCH_SIZE).map(x => x.json) } });\n}\nreturn batches.length > 0 ? batches : [{ json: { batch: [] } }];"
+      }
     },
     {
+      "id": "624917c4-05dd-4790-83b2-8946637b17b2",
+      "name": "POST Batch to Graph",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        1330
+      ],
+      "continueOnFail": true,
       "parameters": {
         "method": "POST",
         "url": "https://forage-graph-production.up.railway.app/ingest_raw_batch",
@@ -1851,33 +1855,29 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ batch: $json.batch }) }}",
+        "jsonBody": "={{ JSON.stringify($json) }}",
         "options": {
-          "timeout": 30000
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
         }
-      },
-      "id": "post-01",
-      "name": "POST Batch to Graph",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        2520,
-        0
-      ],
-      "continueOnFail": true
+      }
     },
     {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nfor (const item of items) {\n  if (item.json.error || (item.json.statusCode && item.json.statusCode >= 400)) {\n    console.error('[Graph POST Error]', JSON.stringify(item.json));\n  } else {\n    const accepted = item.json.accepted_count || '?';\n    console.log(`[Graph POST OK] Batch accepted: ${accepted} entities`);\n  }\n}\nreturn items;"
-      },
-      "id": "log-01",
+      "id": "65abddf5-e34d-43f0-9ece-740d33c64dcb",
       "name": "Log Results",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2800,
-        0
-      ]
+        2700,
+        1330
+      ],
+      "parameters": {
+        "jsCode": "const items = $input.all();\nfor (const item of items) {\n  const d = item.json;\n  if (d && d.error) {\n    console.error('[Graph Batch Error]', JSON.stringify(d));\n  } else {\n    console.log('[Graph Batch OK] accepted=' + (d && d.accepted_count ? d.accepted_count : '?'));\n  }\n}\nreturn items;"
+      }
     }
   ],
   "connections": {
@@ -1885,305 +1885,305 @@
       "main": [
         [
           {
-            "node": "RSS: BBC World News",
+            "node": "RSS 1: BBC World News",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Reuters Top News",
+            "node": "RSS 2: Reuters Top News",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: The Guardian World",
+            "node": "RSS 3: The Guardian World",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Sky News World",
+            "node": "RSS 4: Sky News World",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Foreign Policy",
+            "node": "RSS 5: Foreign Policy",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Foreign Affairs",
+            "node": "RSS 6: Foreign Affairs",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: TechCrunch",
+            "node": "RSS 7: TechCrunch",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: TechCrunch Startups",
+            "node": "RSS 8: TechCrunch Startups",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: TechCrunch Funding",
+            "node": "RSS 9: TechCrunch Funding",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Wired",
+            "node": "RSS 10: Wired",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Ars Technica",
+            "node": "RSS 11: Ars Technica",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: MIT Tech Review",
+            "node": "RSS 12: MIT Tech Review",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: VentureBeat",
+            "node": "RSS 13: VentureBeat",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: The Verge",
+            "node": "RSS 14: The Verge",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Fortune",
+            "node": "RSS 15: Fortune",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Economist Finance",
+            "node": "RSS 16: Economist Finance",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: The Economist",
+            "node": "RSS 17: The Economist",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Inc Magazine",
+            "node": "RSS 18: Inc Magazine",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Forbes Business",
+            "node": "RSS 19: Forbes Business",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Business Insider Tech",
+            "node": "RSS 20: Business Insider Tech",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: BLS Price Indicators",
+            "node": "RSS 21: BLS Price Indicators",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: BLS JOLTS",
+            "node": "RSS 22: BLS JOLTS",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: BLS CPI",
+            "node": "RSS 23: BLS CPI",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Federal Reserve",
+            "node": "RSS 24: Federal Reserve",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: ECB",
+            "node": "RSS 25: ECB",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Marginal Revolution",
+            "node": "RSS 26: Marginal Revolution",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Project Syndicate",
+            "node": "RSS 27: Project Syndicate",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Federal Register",
+            "node": "RSS 28: Federal Register",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: UK Legislation",
+            "node": "RSS 29: UK Legislation",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: EUR-Lex",
+            "node": "RSS 30: EUR-Lex",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: DataBreaches.net",
+            "node": "RSS 31: DataBreaches.net",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: UpGuard Breaches",
+            "node": "RSS 32: UpGuard Breaches",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Cooley M&A",
+            "node": "RSS 33: Cooley M&A",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: DealRoom",
+            "node": "RSS 34: DealRoom",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: arXiv CS",
+            "node": "RSS 35: arXiv CS",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: arXiv Economics",
+            "node": "RSS 36: arXiv Economics",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: arXiv ML",
+            "node": "RSS 37: arXiv ML",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: arXiv Biology",
+            "node": "RSS 38: arXiv Biology",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: HubSpot Marketing",
+            "node": "RSS 39: HubSpot Marketing",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: HubSpot Sales",
+            "node": "RSS 40: HubSpot Sales",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Neil Patel",
+            "node": "RSS 41: Neil Patel",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Sales Hacker",
+            "node": "RSS 42: Sales Hacker",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Gong Blog",
+            "node": "RSS 43: Gong Blog",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Close CRM Blog",
+            "node": "RSS 44: Close CRM Blog",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Psychology Today",
+            "node": "RSS 45: Psychology Today",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Behavioral Scientist",
+            "node": "RSS 46: Behavioral Scientist",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Scientific American",
+            "node": "RSS 47: Scientific American",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Crunchbase News",
+            "node": "RSS 48: Crunchbase News",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: a16z Blog",
+            "node": "RSS 49: a16z Blog",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Y Combinator Blog",
+            "node": "RSS 50: Y Combinator Blog",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: MIT Sloan Review",
+            "node": "RSS 51: MIT Sloan Review",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: McKinsey Insights",
+            "node": "RSS 52: McKinsey Insights",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: OPEC",
+            "node": "RSS 53: OPEC",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Responsible Investor",
+            "node": "RSS 54: Responsible Investor",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: CoinTelegraph",
+            "node": "RSS 55: CoinTelegraph",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Supply Chain Digital",
+            "node": "RSS 56: Supply Chain Digital",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS: Hootsuite Blog",
+            "node": "RSS 57: Hootsuite Blog",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "RSS: BBC World News": {
+    "RSS 1: BBC World News": {
       "main": [
         [
           {
-            "node": "Tag: BBC World News",
+            "node": "Tag 1: BBC World News",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: BBC World News": {
+    "Tag 1: BBC World News": {
       "main": [
         [
           {
@@ -2194,40 +2194,18 @@
         ]
       ]
     },
-    "RSS: Reuters Top News": {
+    "RSS 2: Reuters Top News": {
       "main": [
         [
           {
-            "node": "Tag: Reuters Top News",
+            "node": "Tag 2: Reuters Top News",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Reuters Top News": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: The Guardian World": {
-      "main": [
-        [
-          {
-            "node": "Tag: The Guardian World",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: The Guardian World": {
+    "Tag 2: Reuters Top News": {
       "main": [
         [
           {
@@ -2238,40 +2216,18 @@
         ]
       ]
     },
-    "RSS: Sky News World": {
+    "RSS 3: The Guardian World": {
       "main": [
         [
           {
-            "node": "Tag: Sky News World",
+            "node": "Tag 3: The Guardian World",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Sky News World": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Foreign Policy": {
-      "main": [
-        [
-          {
-            "node": "Tag: Foreign Policy",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Foreign Policy": {
+    "Tag 3: The Guardian World": {
       "main": [
         [
           {
@@ -2282,40 +2238,18 @@
         ]
       ]
     },
-    "RSS: Foreign Affairs": {
+    "RSS 4: Sky News World": {
       "main": [
         [
           {
-            "node": "Tag: Foreign Affairs",
+            "node": "Tag 4: Sky News World",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Foreign Affairs": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: TechCrunch": {
-      "main": [
-        [
-          {
-            "node": "Tag: TechCrunch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: TechCrunch": {
+    "Tag 4: Sky News World": {
       "main": [
         [
           {
@@ -2326,40 +2260,18 @@
         ]
       ]
     },
-    "RSS: TechCrunch Startups": {
+    "RSS 5: Foreign Policy": {
       "main": [
         [
           {
-            "node": "Tag: TechCrunch Startups",
+            "node": "Tag 5: Foreign Policy",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: TechCrunch Startups": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: TechCrunch Funding": {
-      "main": [
-        [
-          {
-            "node": "Tag: TechCrunch Funding",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: TechCrunch Funding": {
+    "Tag 5: Foreign Policy": {
       "main": [
         [
           {
@@ -2370,40 +2282,18 @@
         ]
       ]
     },
-    "RSS: Wired": {
+    "RSS 6: Foreign Affairs": {
       "main": [
         [
           {
-            "node": "Tag: Wired",
+            "node": "Tag 6: Foreign Affairs",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Wired": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Ars Technica": {
-      "main": [
-        [
-          {
-            "node": "Tag: Ars Technica",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Ars Technica": {
+    "Tag 6: Foreign Affairs": {
       "main": [
         [
           {
@@ -2414,40 +2304,18 @@
         ]
       ]
     },
-    "RSS: MIT Tech Review": {
+    "RSS 7: TechCrunch": {
       "main": [
         [
           {
-            "node": "Tag: MIT Tech Review",
+            "node": "Tag 7: TechCrunch",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: MIT Tech Review": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: VentureBeat": {
-      "main": [
-        [
-          {
-            "node": "Tag: VentureBeat",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: VentureBeat": {
+    "Tag 7: TechCrunch": {
       "main": [
         [
           {
@@ -2458,40 +2326,18 @@
         ]
       ]
     },
-    "RSS: The Verge": {
+    "RSS 8: TechCrunch Startups": {
       "main": [
         [
           {
-            "node": "Tag: The Verge",
+            "node": "Tag 8: TechCrunch Startups",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: The Verge": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Fortune": {
-      "main": [
-        [
-          {
-            "node": "Tag: Fortune",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Fortune": {
+    "Tag 8: TechCrunch Startups": {
       "main": [
         [
           {
@@ -2502,40 +2348,18 @@
         ]
       ]
     },
-    "RSS: Economist Finance": {
+    "RSS 9: TechCrunch Funding": {
       "main": [
         [
           {
-            "node": "Tag: Economist Finance",
+            "node": "Tag 9: TechCrunch Funding",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Economist Finance": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: The Economist": {
-      "main": [
-        [
-          {
-            "node": "Tag: The Economist",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: The Economist": {
+    "Tag 9: TechCrunch Funding": {
       "main": [
         [
           {
@@ -2546,40 +2370,18 @@
         ]
       ]
     },
-    "RSS: Inc Magazine": {
+    "RSS 10: Wired": {
       "main": [
         [
           {
-            "node": "Tag: Inc Magazine",
+            "node": "Tag 10: Wired",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Inc Magazine": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Forbes Business": {
-      "main": [
-        [
-          {
-            "node": "Tag: Forbes Business",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Forbes Business": {
+    "Tag 10: Wired": {
       "main": [
         [
           {
@@ -2590,40 +2392,18 @@
         ]
       ]
     },
-    "RSS: Business Insider Tech": {
+    "RSS 11: Ars Technica": {
       "main": [
         [
           {
-            "node": "Tag: Business Insider Tech",
+            "node": "Tag 11: Ars Technica",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Business Insider Tech": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: BLS Price Indicators": {
-      "main": [
-        [
-          {
-            "node": "Tag: BLS Price Indicators",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: BLS Price Indicators": {
+    "Tag 11: Ars Technica": {
       "main": [
         [
           {
@@ -2634,40 +2414,18 @@
         ]
       ]
     },
-    "RSS: BLS JOLTS": {
+    "RSS 12: MIT Tech Review": {
       "main": [
         [
           {
-            "node": "Tag: BLS JOLTS",
+            "node": "Tag 12: MIT Tech Review",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: BLS JOLTS": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: BLS CPI": {
-      "main": [
-        [
-          {
-            "node": "Tag: BLS CPI",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: BLS CPI": {
+    "Tag 12: MIT Tech Review": {
       "main": [
         [
           {
@@ -2678,40 +2436,18 @@
         ]
       ]
     },
-    "RSS: Federal Reserve": {
+    "RSS 13: VentureBeat": {
       "main": [
         [
           {
-            "node": "Tag: Federal Reserve",
+            "node": "Tag 13: VentureBeat",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Federal Reserve": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: ECB": {
-      "main": [
-        [
-          {
-            "node": "Tag: ECB",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: ECB": {
+    "Tag 13: VentureBeat": {
       "main": [
         [
           {
@@ -2722,40 +2458,18 @@
         ]
       ]
     },
-    "RSS: Marginal Revolution": {
+    "RSS 14: The Verge": {
       "main": [
         [
           {
-            "node": "Tag: Marginal Revolution",
+            "node": "Tag 14: The Verge",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Marginal Revolution": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Project Syndicate": {
-      "main": [
-        [
-          {
-            "node": "Tag: Project Syndicate",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Project Syndicate": {
+    "Tag 14: The Verge": {
       "main": [
         [
           {
@@ -2766,40 +2480,18 @@
         ]
       ]
     },
-    "RSS: Federal Register": {
+    "RSS 15: Fortune": {
       "main": [
         [
           {
-            "node": "Tag: Federal Register",
+            "node": "Tag 15: Fortune",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Federal Register": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: UK Legislation": {
-      "main": [
-        [
-          {
-            "node": "Tag: UK Legislation",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: UK Legislation": {
+    "Tag 15: Fortune": {
       "main": [
         [
           {
@@ -2810,40 +2502,18 @@
         ]
       ]
     },
-    "RSS: EUR-Lex": {
+    "RSS 16: Economist Finance": {
       "main": [
         [
           {
-            "node": "Tag: EUR-Lex",
+            "node": "Tag 16: Economist Finance",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: EUR-Lex": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: DataBreaches.net": {
-      "main": [
-        [
-          {
-            "node": "Tag: DataBreaches.net",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: DataBreaches.net": {
+    "Tag 16: Economist Finance": {
       "main": [
         [
           {
@@ -2854,40 +2524,18 @@
         ]
       ]
     },
-    "RSS: UpGuard Breaches": {
+    "RSS 17: The Economist": {
       "main": [
         [
           {
-            "node": "Tag: UpGuard Breaches",
+            "node": "Tag 17: The Economist",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: UpGuard Breaches": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Cooley M&A": {
-      "main": [
-        [
-          {
-            "node": "Tag: Cooley M&A",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Cooley M&A": {
+    "Tag 17: The Economist": {
       "main": [
         [
           {
@@ -2898,40 +2546,18 @@
         ]
       ]
     },
-    "RSS: DealRoom": {
+    "RSS 18: Inc Magazine": {
       "main": [
         [
           {
-            "node": "Tag: DealRoom",
+            "node": "Tag 18: Inc Magazine",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: DealRoom": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: arXiv CS": {
-      "main": [
-        [
-          {
-            "node": "Tag: arXiv CS",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: arXiv CS": {
+    "Tag 18: Inc Magazine": {
       "main": [
         [
           {
@@ -2942,40 +2568,18 @@
         ]
       ]
     },
-    "RSS: arXiv Economics": {
+    "RSS 19: Forbes Business": {
       "main": [
         [
           {
-            "node": "Tag: arXiv Economics",
+            "node": "Tag 19: Forbes Business",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: arXiv Economics": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: arXiv ML": {
-      "main": [
-        [
-          {
-            "node": "Tag: arXiv ML",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: arXiv ML": {
+    "Tag 19: Forbes Business": {
       "main": [
         [
           {
@@ -2986,40 +2590,18 @@
         ]
       ]
     },
-    "RSS: arXiv Biology": {
+    "RSS 20: Business Insider Tech": {
       "main": [
         [
           {
-            "node": "Tag: arXiv Biology",
+            "node": "Tag 20: Business Insider Tech",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: arXiv Biology": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: HubSpot Marketing": {
-      "main": [
-        [
-          {
-            "node": "Tag: HubSpot Marketing",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: HubSpot Marketing": {
+    "Tag 20: Business Insider Tech": {
       "main": [
         [
           {
@@ -3030,40 +2612,18 @@
         ]
       ]
     },
-    "RSS: HubSpot Sales": {
+    "RSS 21: BLS Price Indicators": {
       "main": [
         [
           {
-            "node": "Tag: HubSpot Sales",
+            "node": "Tag 21: BLS Price Indicators",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: HubSpot Sales": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Neil Patel": {
-      "main": [
-        [
-          {
-            "node": "Tag: Neil Patel",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Neil Patel": {
+    "Tag 21: BLS Price Indicators": {
       "main": [
         [
           {
@@ -3074,40 +2634,18 @@
         ]
       ]
     },
-    "RSS: Sales Hacker": {
+    "RSS 22: BLS JOLTS": {
       "main": [
         [
           {
-            "node": "Tag: Sales Hacker",
+            "node": "Tag 22: BLS JOLTS",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Sales Hacker": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Gong Blog": {
-      "main": [
-        [
-          {
-            "node": "Tag: Gong Blog",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Gong Blog": {
+    "Tag 22: BLS JOLTS": {
       "main": [
         [
           {
@@ -3118,40 +2656,18 @@
         ]
       ]
     },
-    "RSS: Close CRM Blog": {
+    "RSS 23: BLS CPI": {
       "main": [
         [
           {
-            "node": "Tag: Close CRM Blog",
+            "node": "Tag 23: BLS CPI",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Close CRM Blog": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Psychology Today": {
-      "main": [
-        [
-          {
-            "node": "Tag: Psychology Today",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Psychology Today": {
+    "Tag 23: BLS CPI": {
       "main": [
         [
           {
@@ -3162,40 +2678,18 @@
         ]
       ]
     },
-    "RSS: Behavioral Scientist": {
+    "RSS 24: Federal Reserve": {
       "main": [
         [
           {
-            "node": "Tag: Behavioral Scientist",
+            "node": "Tag 24: Federal Reserve",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Behavioral Scientist": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: Scientific American": {
-      "main": [
-        [
-          {
-            "node": "Tag: Scientific American",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: Scientific American": {
+    "Tag 24: Federal Reserve": {
       "main": [
         [
           {
@@ -3206,40 +2700,18 @@
         ]
       ]
     },
-    "RSS: Crunchbase News": {
+    "RSS 25: ECB": {
       "main": [
         [
           {
-            "node": "Tag: Crunchbase News",
+            "node": "Tag 25: ECB",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Crunchbase News": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: a16z Blog": {
-      "main": [
-        [
-          {
-            "node": "Tag: a16z Blog",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: a16z Blog": {
+    "Tag 25: ECB": {
       "main": [
         [
           {
@@ -3250,40 +2722,18 @@
         ]
       ]
     },
-    "RSS: Y Combinator Blog": {
+    "RSS 26: Marginal Revolution": {
       "main": [
         [
           {
-            "node": "Tag: Y Combinator Blog",
+            "node": "Tag 26: Marginal Revolution",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Y Combinator Blog": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: MIT Sloan Review": {
-      "main": [
-        [
-          {
-            "node": "Tag: MIT Sloan Review",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: MIT Sloan Review": {
+    "Tag 26: Marginal Revolution": {
       "main": [
         [
           {
@@ -3294,40 +2744,18 @@
         ]
       ]
     },
-    "RSS: McKinsey Insights": {
+    "RSS 27: Project Syndicate": {
       "main": [
         [
           {
-            "node": "Tag: McKinsey Insights",
+            "node": "Tag 27: Project Syndicate",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: McKinsey Insights": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: OPEC": {
-      "main": [
-        [
-          {
-            "node": "Tag: OPEC",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: OPEC": {
+    "Tag 27: Project Syndicate": {
       "main": [
         [
           {
@@ -3338,40 +2766,18 @@
         ]
       ]
     },
-    "RSS: Responsible Investor": {
+    "RSS 28: Federal Register": {
       "main": [
         [
           {
-            "node": "Tag: Responsible Investor",
+            "node": "Tag 28: Federal Register",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Responsible Investor": {
-      "main": [
-        [
-          {
-            "node": "Merge All Feeds",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RSS: CoinTelegraph": {
-      "main": [
-        [
-          {
-            "node": "Tag: CoinTelegraph",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Tag: CoinTelegraph": {
+    "Tag 28: Federal Register": {
       "main": [
         [
           {
@@ -3382,18 +2788,18 @@
         ]
       ]
     },
-    "RSS: Supply Chain Digital": {
+    "RSS 29: UK Legislation": {
       "main": [
         [
           {
-            "node": "Tag: Supply Chain Digital",
+            "node": "Tag 29: UK Legislation",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Supply Chain Digital": {
+    "Tag 29: UK Legislation": {
       "main": [
         [
           {
@@ -3404,18 +2810,612 @@
         ]
       ]
     },
-    "RSS: Hootsuite Blog": {
+    "RSS 30: EUR-Lex": {
       "main": [
         [
           {
-            "node": "Tag: Hootsuite Blog",
+            "node": "Tag 30: EUR-Lex",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tag: Hootsuite Blog": {
+    "Tag 30: EUR-Lex": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 31: DataBreaches.net": {
+      "main": [
+        [
+          {
+            "node": "Tag 31: DataBreaches.net",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 31: DataBreaches.net": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 32: UpGuard Breaches": {
+      "main": [
+        [
+          {
+            "node": "Tag 32: UpGuard Breaches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 32: UpGuard Breaches": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 33: Cooley M&A": {
+      "main": [
+        [
+          {
+            "node": "Tag 33: Cooley M&A",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 33: Cooley M&A": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 34: DealRoom": {
+      "main": [
+        [
+          {
+            "node": "Tag 34: DealRoom",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 34: DealRoom": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 35: arXiv CS": {
+      "main": [
+        [
+          {
+            "node": "Tag 35: arXiv CS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 35: arXiv CS": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 36: arXiv Economics": {
+      "main": [
+        [
+          {
+            "node": "Tag 36: arXiv Economics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 36: arXiv Economics": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 37: arXiv ML": {
+      "main": [
+        [
+          {
+            "node": "Tag 37: arXiv ML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 37: arXiv ML": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 38: arXiv Biology": {
+      "main": [
+        [
+          {
+            "node": "Tag 38: arXiv Biology",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 38: arXiv Biology": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 39: HubSpot Marketing": {
+      "main": [
+        [
+          {
+            "node": "Tag 39: HubSpot Marketing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 39: HubSpot Marketing": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 40: HubSpot Sales": {
+      "main": [
+        [
+          {
+            "node": "Tag 40: HubSpot Sales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 40: HubSpot Sales": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 41: Neil Patel": {
+      "main": [
+        [
+          {
+            "node": "Tag 41: Neil Patel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 41: Neil Patel": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 42: Sales Hacker": {
+      "main": [
+        [
+          {
+            "node": "Tag 42: Sales Hacker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 42: Sales Hacker": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 43: Gong Blog": {
+      "main": [
+        [
+          {
+            "node": "Tag 43: Gong Blog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 43: Gong Blog": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 44: Close CRM Blog": {
+      "main": [
+        [
+          {
+            "node": "Tag 44: Close CRM Blog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 44: Close CRM Blog": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 45: Psychology Today": {
+      "main": [
+        [
+          {
+            "node": "Tag 45: Psychology Today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 45: Psychology Today": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 46: Behavioral Scientist": {
+      "main": [
+        [
+          {
+            "node": "Tag 46: Behavioral Scientist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 46: Behavioral Scientist": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 47: Scientific American": {
+      "main": [
+        [
+          {
+            "node": "Tag 47: Scientific American",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 47: Scientific American": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 48: Crunchbase News": {
+      "main": [
+        [
+          {
+            "node": "Tag 48: Crunchbase News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 48: Crunchbase News": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 49: a16z Blog": {
+      "main": [
+        [
+          {
+            "node": "Tag 49: a16z Blog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 49: a16z Blog": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 50: Y Combinator Blog": {
+      "main": [
+        [
+          {
+            "node": "Tag 50: Y Combinator Blog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 50: Y Combinator Blog": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 51: MIT Sloan Review": {
+      "main": [
+        [
+          {
+            "node": "Tag 51: MIT Sloan Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 51: MIT Sloan Review": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 52: McKinsey Insights": {
+      "main": [
+        [
+          {
+            "node": "Tag 52: McKinsey Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 52: McKinsey Insights": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 53: OPEC": {
+      "main": [
+        [
+          {
+            "node": "Tag 53: OPEC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 53: OPEC": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 54: Responsible Investor": {
+      "main": [
+        [
+          {
+            "node": "Tag 54: Responsible Investor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 54: Responsible Investor": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 55: CoinTelegraph": {
+      "main": [
+        [
+          {
+            "node": "Tag 55: CoinTelegraph",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 55: CoinTelegraph": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 56: Supply Chain Digital": {
+      "main": [
+        [
+          {
+            "node": "Tag 56: Supply Chain Digital",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 56: Supply Chain Digital": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS 57: Hootsuite Blog": {
+      "main": [
+        [
+          {
+            "node": "Tag 57: Hootsuite Blog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag 57: Hootsuite Blog": {
       "main": [
         [
           {
@@ -3441,14 +3441,14 @@
       "main": [
         [
           {
-            "node": "Batch (25 items)",
+            "node": "Batch 25 Items",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Batch (25 items)": {
+    "Batch 25 Items": {
       "main": [
         [
           {
@@ -3471,13 +3471,13 @@
       ]
     }
   },
-  "pinData": {},
-  "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
   },
+  "versionId": "ecf1fcc8-b6ea-40b8-913c-8cab385b6868",
   "meta": {
-    "instanceId": "ae5f8124bf3aad7a23066576ded4af200bc9b0e0a96aa39b0c8e021b358cd80b",
-    "description": "Universal causal intelligence feed pipeline. 57 individual RSS sources fetched in parallel every 6 hours. Each article is normalized to a typed graph entity with causal metadata (causal_weight, mechanism), batched in groups of 25, and sent to /ingest_raw_batch on the Forage Graph API."
+    "templateCredsSetupCompleted": true
   }
 }
