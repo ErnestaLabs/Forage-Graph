@@ -2,7 +2,7 @@
   "name": "Forage Graph \u2014 Master Intelligence Feeds v3",
   "nodes": [
     {
-      "id": "36278099-56e7-4474-8df6-91c9f99323d5",
+      "id": "74e97fd2-4585-482c-b43b-1e759fb24697",
       "name": "Run Every 6 Hours",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.1,
@@ -22,7 +22,7 @@
       }
     },
     {
-      "id": "1ab3d553-8860-4728-bf33-cb353b097205",
+      "id": "f57feb83-8917-4f23-a54b-92d0d197f113",
       "name": "RSS 1: BBC World News",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -39,7 +39,7 @@
       }
     },
     {
-      "id": "ce7ad641-6a5b-4c18-a0f4-ea70b7d4df0e",
+      "id": "e14a7d49-7ba7-4f04-9c3b-468739fa3a5a",
       "name": "Tag 1: BBC World News",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -53,7 +53,7 @@
       }
     },
     {
-      "id": "8b62115e-357a-408e-98b2-72d5eeeeea8c",
+      "id": "d0fbdd49-ab41-44f5-abba-bb436b3cbd71",
       "name": "RSS 2: Reuters Top News",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -70,7 +70,7 @@
       }
     },
     {
-      "id": "30a5e34c-96f0-4947-9da2-46ce41c23efa",
+      "id": "0359d549-bbf9-42d3-b4d3-aeaa46e4d974",
       "name": "Tag 2: Reuters Top News",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -84,7 +84,7 @@
       }
     },
     {
-      "id": "d987df2f-bad0-4dc0-9d4a-6b87905dba83",
+      "id": "72a20e6d-c911-4be2-aeac-ab927c9fdabc",
       "name": "RSS 3: The Guardian World",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -101,7 +101,7 @@
       }
     },
     {
-      "id": "9d692a37-8b49-4899-8195-dde9fb56cf26",
+      "id": "c7ad0ac4-2bf5-4774-a315-d8335812e567",
       "name": "Tag 3: The Guardian World",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -115,7 +115,7 @@
       }
     },
     {
-      "id": "97536382-0a59-466f-a6ce-a08bf3bf75e6",
+      "id": "5945a8cd-42f6-43e0-a717-38892c417016",
       "name": "RSS 4: Sky News World",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -132,7 +132,7 @@
       }
     },
     {
-      "id": "81252f4b-8519-400c-b55d-6bc14cc5ae81",
+      "id": "d2beac84-d1d7-4ca6-b24c-ad7c3e607a42",
       "name": "Tag 4: Sky News World",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -146,7 +146,7 @@
       }
     },
     {
-      "id": "e0bacd3b-39a1-49be-b85b-04d135b23335",
+      "id": "5ce04d90-e05b-4492-9821-6ff7e7930be2",
       "name": "RSS 5: Foreign Policy",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -163,7 +163,7 @@
       }
     },
     {
-      "id": "1f5f890e-aff2-4f4c-a6c7-643549d87824",
+      "id": "9ebe2f0d-c9fa-4274-9f1e-50c6f456697d",
       "name": "Tag 5: Foreign Policy",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -177,7 +177,7 @@
       }
     },
     {
-      "id": "4e6aa40f-0179-4a2d-a3ff-408bb0bcc632",
+      "id": "b8d45a01-cfe2-4f2e-8b05-e83004e5cc0e",
       "name": "RSS 6: Foreign Affairs",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -194,7 +194,7 @@
       }
     },
     {
-      "id": "527ca6f5-0532-44b6-b025-d40426d55a9e",
+      "id": "f83151cf-2be4-46c3-89e4-cf8ec35788fa",
       "name": "Tag 6: Foreign Affairs",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -208,7 +208,7 @@
       }
     },
     {
-      "id": "e8f68dbc-d723-4fc8-83d9-9186c896000b",
+      "id": "c7f12c61-85f0-4a4e-b377-b23681417ab8",
       "name": "RSS 7: TechCrunch",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -225,7 +225,7 @@
       }
     },
     {
-      "id": "fbb0dd4e-3566-4b4c-a29c-a14241426a43",
+      "id": "36651940-4680-42cd-9ba4-c4d4d90486bf",
       "name": "Tag 7: TechCrunch",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -239,7 +239,7 @@
       }
     },
     {
-      "id": "506d0db5-8fd3-4d20-8d57-d01972cac929",
+      "id": "7df82da5-4bf9-4a2b-88e0-cfce5c7af55f",
       "name": "RSS 8: TechCrunch Startups",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -256,7 +256,7 @@
       }
     },
     {
-      "id": "2626003b-77b0-461f-8fee-51760e401402",
+      "id": "ba9701bb-b197-4169-9bfd-adc3c4d35e7d",
       "name": "Tag 8: TechCrunch Startups",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -270,7 +270,7 @@
       }
     },
     {
-      "id": "10c280b9-8815-4974-beeb-927dc0e27918",
+      "id": "0fbd21d7-d628-4152-ab91-247fa801f15d",
       "name": "RSS 9: TechCrunch Funding",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -287,7 +287,7 @@
       }
     },
     {
-      "id": "d1ce35fa-8307-498e-b67b-c38539ac9014",
+      "id": "71b6b981-ed0b-4fdc-8536-eff91f54264f",
       "name": "Tag 9: TechCrunch Funding",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -301,7 +301,7 @@
       }
     },
     {
-      "id": "929fcd4f-cbda-4aae-af78-2561b18fe637",
+      "id": "3822ef0b-91ef-4ed3-8f2b-e2a076df771d",
       "name": "RSS 10: Wired",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -318,7 +318,7 @@
       }
     },
     {
-      "id": "f32189f7-f3af-4e07-993a-503d788ceae7",
+      "id": "73097065-4d5c-41b9-82f2-8da7be592b41",
       "name": "Tag 10: Wired",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -332,7 +332,7 @@
       }
     },
     {
-      "id": "096b0b10-91c9-4865-93c1-33ea831606dd",
+      "id": "60e05d5c-d24c-40e6-a4fa-68ea2f2da3b8",
       "name": "RSS 11: Ars Technica",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -349,7 +349,7 @@
       }
     },
     {
-      "id": "d39e745f-7eb1-43a4-bb0d-9b6e1eb098b4",
+      "id": "65c1577b-d366-480b-b304-8655c128304c",
       "name": "Tag 11: Ars Technica",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -363,7 +363,7 @@
       }
     },
     {
-      "id": "c2dd4a21-f09d-40ab-87cc-dfbf89c7573c",
+      "id": "ec0c4e0f-4f85-49fa-a9d4-29a27db01dbc",
       "name": "RSS 12: MIT Tech Review",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -380,7 +380,7 @@
       }
     },
     {
-      "id": "83a82469-44be-4600-93f8-82ac2d4a70c6",
+      "id": "6ec4f2b6-fc91-4071-a60d-0f9f69b466fb",
       "name": "Tag 12: MIT Tech Review",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -394,7 +394,7 @@
       }
     },
     {
-      "id": "e5318dd7-40f4-4392-8754-adce607b91d1",
+      "id": "f2848bfd-85b2-4cb7-a291-df530725da8b",
       "name": "RSS 13: VentureBeat",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -411,7 +411,7 @@
       }
     },
     {
-      "id": "bb792260-814c-4a82-9a17-14f5a281cdb0",
+      "id": "5c080374-228f-42b8-9fd4-b8bd40607277",
       "name": "Tag 13: VentureBeat",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -425,7 +425,7 @@
       }
     },
     {
-      "id": "54e1ddfc-8333-4e38-9ee1-738593e2a69d",
+      "id": "e6ef26b8-1507-4137-8567-d8eb1adb01ac",
       "name": "RSS 14: The Verge",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -442,7 +442,7 @@
       }
     },
     {
-      "id": "b21f01ec-2f5d-4ac3-8d2b-8edc1771e29f",
+      "id": "cdd4cc99-89ae-47a8-845b-f420a8d5b5b6",
       "name": "Tag 14: The Verge",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -456,7 +456,7 @@
       }
     },
     {
-      "id": "99d4dbe8-3591-4931-9e01-eb9b467efb19",
+      "id": "650a3431-7502-4fa6-b00f-a50b6d27b999",
       "name": "RSS 15: Fortune",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -473,7 +473,7 @@
       }
     },
     {
-      "id": "195c5624-60f7-4eda-9946-e229a5b48acf",
+      "id": "534bd1d6-87b5-454f-80e5-5ca73f17c73f",
       "name": "Tag 15: Fortune",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -487,7 +487,7 @@
       }
     },
     {
-      "id": "ab2e3414-b44c-434c-bc8a-d63c8a06bd6a",
+      "id": "4282d5f1-5e62-41cc-a51a-b456943520b7",
       "name": "RSS 16: Economist Finance",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -504,7 +504,7 @@
       }
     },
     {
-      "id": "3e17ad85-08b9-4208-a2e1-0d8c4b4477f8",
+      "id": "05e2e4e7-6e5e-4f16-8fcd-03bb9901616b",
       "name": "Tag 16: Economist Finance",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -518,7 +518,7 @@
       }
     },
     {
-      "id": "6c20b3f5-dbf8-418c-b41a-dc4bbba7e980",
+      "id": "c2223681-6fdc-468b-86f2-c5395bd26a86",
       "name": "RSS 17: The Economist",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -535,7 +535,7 @@
       }
     },
     {
-      "id": "f7508c86-dacb-48cf-b798-cf6361095bf2",
+      "id": "96ae8161-1b58-477f-84a1-833adabd9fc3",
       "name": "Tag 17: The Economist",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -549,7 +549,7 @@
       }
     },
     {
-      "id": "21432728-8d6e-4fe3-ae52-555aaa2e72ee",
+      "id": "e2369a16-6e67-40ae-a3fb-015c9c1d6997",
       "name": "RSS 18: Inc Magazine",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -566,7 +566,7 @@
       }
     },
     {
-      "id": "5e54eb69-834e-4c6c-b4d5-4da039e71aac",
+      "id": "1b741bd3-dc2d-495a-9c65-892af6f8f66c",
       "name": "Tag 18: Inc Magazine",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -580,7 +580,7 @@
       }
     },
     {
-      "id": "0df405ad-bcb4-42d4-84fb-c6fc58d017e5",
+      "id": "2d915845-80fc-4c29-9313-3b2704f190e9",
       "name": "RSS 19: Forbes Business",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -597,7 +597,7 @@
       }
     },
     {
-      "id": "b6ee7cc5-3eb4-4aff-9947-f67598307c28",
+      "id": "b3b11b52-f074-45c4-9efd-3ee5577edd37",
       "name": "Tag 19: Forbes Business",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -611,7 +611,7 @@
       }
     },
     {
-      "id": "f6339f37-6e99-4a98-af48-009812ee71a6",
+      "id": "3f8d9da1-69c4-4a1f-9b02-4198e799fd40",
       "name": "RSS 20: Business Insider Tech",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -628,7 +628,7 @@
       }
     },
     {
-      "id": "6b0ae882-8756-4719-9299-c5133bf72221",
+      "id": "6276712f-c34a-4156-95d7-e88cc219c26e",
       "name": "Tag 20: Business Insider Tech",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -642,7 +642,7 @@
       }
     },
     {
-      "id": "30c7f52f-beee-4319-90d3-c9020d1c2b69",
+      "id": "2558dc0e-c6a5-4b3d-a726-a68c63b27ae6",
       "name": "RSS 21: BLS Price Indicators",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -659,7 +659,7 @@
       }
     },
     {
-      "id": "0cd06595-3ebf-406d-9717-30c92f632691",
+      "id": "5ebedbd2-2785-4693-816d-daca3c30a8ed",
       "name": "Tag 21: BLS Price Indicators",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -673,7 +673,7 @@
       }
     },
     {
-      "id": "678d8f6e-e715-4f90-bd54-5c5d575e1ee5",
+      "id": "bcbb0090-117a-48f3-8f8e-b200e373414f",
       "name": "RSS 22: BLS JOLTS",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -690,7 +690,7 @@
       }
     },
     {
-      "id": "6514bb8b-dd2a-4528-a4d6-60acf8dc809f",
+      "id": "3b11ea0c-9d43-4789-aba9-7206619c9d8a",
       "name": "Tag 22: BLS JOLTS",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -704,7 +704,7 @@
       }
     },
     {
-      "id": "250eaa91-17b8-4831-a5a7-d3b885954eb6",
+      "id": "3a65ee88-3b9b-46b5-a72e-2a60b4adae3e",
       "name": "RSS 23: BLS CPI",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -721,7 +721,7 @@
       }
     },
     {
-      "id": "d446b55d-5d87-49d9-9bc8-791cdcae670d",
+      "id": "6f9e7754-8780-48ce-8010-6b10bcf012ae",
       "name": "Tag 23: BLS CPI",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -735,7 +735,7 @@
       }
     },
     {
-      "id": "455fb768-ba75-4df2-b627-5ce0beb9e89a",
+      "id": "131c4896-14d3-48ce-9e48-35e41a317b83",
       "name": "RSS 24: Federal Reserve",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -752,7 +752,7 @@
       }
     },
     {
-      "id": "c8e61e5e-aeb3-448c-ac3e-ddd489df52f3",
+      "id": "c1bcca51-fa1d-4ffb-8f96-c805079f0988",
       "name": "Tag 24: Federal Reserve",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -766,7 +766,7 @@
       }
     },
     {
-      "id": "c8406c9d-a6b7-445b-b434-b9aeef21565d",
+      "id": "2eddba03-d814-4f9f-9f8a-0499b69c4dfb",
       "name": "RSS 25: ECB",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -783,7 +783,7 @@
       }
     },
     {
-      "id": "400b0b3c-6190-400d-8013-98a36a610d9b",
+      "id": "6d21d3c7-bf80-435f-870a-e8e27138b2cf",
       "name": "Tag 25: ECB",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -797,7 +797,7 @@
       }
     },
     {
-      "id": "5a05d33d-4e21-4ce8-98b8-e0653ae178cb",
+      "id": "ca4a70c2-aaf3-4fda-8ad4-9aa7641ba979",
       "name": "RSS 26: Marginal Revolution",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -814,7 +814,7 @@
       }
     },
     {
-      "id": "dfcc5c34-c39c-4d16-a1ca-2e6d10c96f3d",
+      "id": "7c3c02c1-252d-4c29-bc01-77f6eaf1c4bf",
       "name": "Tag 26: Marginal Revolution",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -828,7 +828,7 @@
       }
     },
     {
-      "id": "ce2eef7e-512b-4eda-9aa9-11c09db55111",
+      "id": "126df388-4316-42ce-8406-0bf24cd02a72",
       "name": "RSS 27: Project Syndicate",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -845,7 +845,7 @@
       }
     },
     {
-      "id": "aced6f1e-57e4-41a4-b6af-b89a6e1a2b3a",
+      "id": "c2853b92-1cc2-43fa-bb3b-48e73d3f9c5f",
       "name": "Tag 27: Project Syndicate",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -859,7 +859,7 @@
       }
     },
     {
-      "id": "009a1421-f157-4511-a393-4e89445ca1bc",
+      "id": "98e61c59-6c27-4959-909f-e8397bb9ac81",
       "name": "RSS 28: Federal Register",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -876,7 +876,7 @@
       }
     },
     {
-      "id": "98dd48cb-45b6-49bc-9cde-00b52a65f465",
+      "id": "3ce104cd-ee5b-436d-933c-007a8b0de1b3",
       "name": "Tag 28: Federal Register",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -890,7 +890,7 @@
       }
     },
     {
-      "id": "66cbb484-5423-4367-8dcb-80bc39383eed",
+      "id": "d6984e05-21fd-48b7-9f9f-e08e495af2aa",
       "name": "RSS 29: UK Legislation",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -907,7 +907,7 @@
       }
     },
     {
-      "id": "551e09d8-9563-41f4-89fe-edd8c07de577",
+      "id": "a6f2aeaa-c556-4f95-b081-f58712026171",
       "name": "Tag 29: UK Legislation",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -921,7 +921,7 @@
       }
     },
     {
-      "id": "ebee28d3-ebe5-4164-987c-684745a942ff",
+      "id": "043c5900-18bd-47d7-a38c-783370e7874a",
       "name": "RSS 30: EUR-Lex",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -938,7 +938,7 @@
       }
     },
     {
-      "id": "0f071135-2732-41fa-86f7-348dafe9bf98",
+      "id": "43bd310b-5c38-472e-a9ee-f789fa153236",
       "name": "Tag 30: EUR-Lex",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -952,7 +952,7 @@
       }
     },
     {
-      "id": "b9df9747-ae22-48b9-a2cd-bf6c2c3d5f87",
+      "id": "b28b3904-c8e3-4561-b377-7f14d4d05dbf",
       "name": "RSS 31: DataBreaches.net",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -969,7 +969,7 @@
       }
     },
     {
-      "id": "cd401605-7dc5-4671-90d2-72f89c02c9b1",
+      "id": "acfc70fe-7139-409d-bc06-40b9f07ec670",
       "name": "Tag 31: DataBreaches.net",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -983,7 +983,7 @@
       }
     },
     {
-      "id": "22824016-e398-4a2e-8f04-1259e93a6d82",
+      "id": "ac56ef93-e799-48b2-b90d-a3631ff34f0d",
       "name": "RSS 32: UpGuard Breaches",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1000,7 +1000,7 @@
       }
     },
     {
-      "id": "7376170a-f10e-4af3-bcf2-8217286bc48d",
+      "id": "16c7c379-12c3-498d-a380-b78fbac3c7b5",
       "name": "Tag 32: UpGuard Breaches",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1014,7 +1014,7 @@
       }
     },
     {
-      "id": "3270f4ab-2e2f-4564-b551-6298753a8485",
+      "id": "223c45a9-e0f3-4879-b5d7-f9805ebf77a1",
       "name": "RSS 33: Cooley M&A",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1031,7 +1031,7 @@
       }
     },
     {
-      "id": "e5d2b4d8-b6ff-4a57-89f5-e9286c95bfbc",
+      "id": "c5386c2f-bbae-4d89-9c6c-d21a6ce1e248",
       "name": "Tag 33: Cooley M&A",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1045,7 +1045,7 @@
       }
     },
     {
-      "id": "f61bb795-b04f-4ca3-a2a3-761a6bbace31",
+      "id": "f70f5b5e-410a-4498-8246-12d6ecca2d14",
       "name": "RSS 34: DealRoom",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1062,7 +1062,7 @@
       }
     },
     {
-      "id": "0a303c72-cd1d-4cac-a617-2fd38979fe8a",
+      "id": "ec97a3a3-1ead-4f4b-8399-7632c1eec0c4",
       "name": "Tag 34: DealRoom",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1076,7 +1076,7 @@
       }
     },
     {
-      "id": "692bca73-14ca-453b-bde9-abeb1aa66a39",
+      "id": "f6d4d340-af30-41fa-ae86-49663ff6a221",
       "name": "RSS 35: arXiv CS",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1093,7 +1093,7 @@
       }
     },
     {
-      "id": "9adb0a06-1415-481e-92fa-74f0a5a3e828",
+      "id": "27ba94ab-f2e7-499b-b92a-82a2d94b4a9e",
       "name": "Tag 35: arXiv CS",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1107,7 +1107,7 @@
       }
     },
     {
-      "id": "7538864f-1f21-40ea-8a2f-74464608291d",
+      "id": "68eb5c51-d35e-42e1-8257-f3376a80020e",
       "name": "RSS 36: arXiv Economics",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1124,7 +1124,7 @@
       }
     },
     {
-      "id": "b82e32e2-cd12-402e-b64d-c49f3ace48c1",
+      "id": "140c70d3-730e-42a6-bf1e-cf144c4c5e25",
       "name": "Tag 36: arXiv Economics",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1138,7 +1138,7 @@
       }
     },
     {
-      "id": "7aa1696b-0dbf-485c-8419-26e4f630923c",
+      "id": "ab0cb77e-1d65-49d1-b575-f5f2aefcd6ec",
       "name": "RSS 37: arXiv ML",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1155,7 +1155,7 @@
       }
     },
     {
-      "id": "7c32fbaa-90c3-4578-bcf7-1c86d2936ac6",
+      "id": "005bf172-1e1a-404a-8df2-d27a0f1d7b3a",
       "name": "Tag 37: arXiv ML",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1169,7 +1169,7 @@
       }
     },
     {
-      "id": "3d35286b-8c2f-4927-b4b2-7ec31789455f",
+      "id": "89399f1f-f582-48ce-8f1f-cb601a01c1e8",
       "name": "RSS 38: arXiv Biology",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1186,7 +1186,7 @@
       }
     },
     {
-      "id": "6a885483-297a-4dc5-96a5-3a2c75f33856",
+      "id": "ad25e96d-0bb4-43e0-912c-a92db3d4eb51",
       "name": "Tag 38: arXiv Biology",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1200,7 +1200,7 @@
       }
     },
     {
-      "id": "40cca21b-2c31-4f0d-9e31-b01c52eb1215",
+      "id": "a811e42e-5d15-4ab6-9eca-2e46485be0e4",
       "name": "RSS 39: HubSpot Marketing",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1217,7 +1217,7 @@
       }
     },
     {
-      "id": "72bf7d9a-277d-4e25-97be-5356245ace6b",
+      "id": "fe68f986-dff4-4f88-aa4f-10b785c643c9",
       "name": "Tag 39: HubSpot Marketing",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1231,7 +1231,7 @@
       }
     },
     {
-      "id": "16721571-25bc-42f7-bb8e-3b61e6c063f5",
+      "id": "bda43e8f-2442-4268-a58e-61729d3c953c",
       "name": "RSS 40: HubSpot Sales",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1248,7 +1248,7 @@
       }
     },
     {
-      "id": "7b5ff85c-e450-439b-8576-fbe0ec377845",
+      "id": "c9f2451b-feb2-4985-8652-b7d6c0f7d5ee",
       "name": "Tag 40: HubSpot Sales",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1262,7 +1262,7 @@
       }
     },
     {
-      "id": "ceca15e8-0eb1-4d57-aa75-5a5d0407ff31",
+      "id": "a60e9788-ef1e-4a55-a381-ec407e94e3c3",
       "name": "RSS 41: Neil Patel",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1279,7 +1279,7 @@
       }
     },
     {
-      "id": "214e0e26-312c-4345-bdc5-602fe948b673",
+      "id": "309ff67a-95e3-416d-99ac-23c4b0c7c0da",
       "name": "Tag 41: Neil Patel",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1293,7 +1293,7 @@
       }
     },
     {
-      "id": "62733879-d14b-47c3-a41e-b78b48b28e97",
+      "id": "d493c368-2afc-43f7-9347-065f2321ba79",
       "name": "RSS 42: Sales Hacker",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1310,7 +1310,7 @@
       }
     },
     {
-      "id": "e2fe7bea-e76b-4e3f-ac34-f14d670b2449",
+      "id": "81f703f8-9eab-4fc8-a240-a19a71c21f5a",
       "name": "Tag 42: Sales Hacker",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1324,7 +1324,7 @@
       }
     },
     {
-      "id": "389fbf1a-e111-4d84-80be-499d1d2c5406",
+      "id": "51ae5fdc-8789-4e81-a6ca-45b78ca23ec5",
       "name": "RSS 43: Gong Blog",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1341,7 +1341,7 @@
       }
     },
     {
-      "id": "f3ea42e8-ea44-4d13-8d09-a7781995ce62",
+      "id": "8594b94d-efed-4510-818a-3be9bfeb0a52",
       "name": "Tag 43: Gong Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1355,7 +1355,7 @@
       }
     },
     {
-      "id": "d3be6736-93ee-4c17-84b6-4a12cfdc71e2",
+      "id": "dc61377c-6f4a-43c7-ad0b-e2d49586e08f",
       "name": "RSS 44: Close CRM Blog",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1372,7 +1372,7 @@
       }
     },
     {
-      "id": "25f3e6e8-efcd-4b9f-b79a-2a7a10e9fcb1",
+      "id": "8039ced6-9538-46b6-aeaf-0a51569f8706",
       "name": "Tag 44: Close CRM Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1386,7 +1386,7 @@
       }
     },
     {
-      "id": "2ef48c6f-e3ef-47db-9f86-bb8e4d7a157b",
+      "id": "6c2fce28-d796-43f1-8fc2-4a8660129c98",
       "name": "RSS 45: Psychology Today",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1403,7 +1403,7 @@
       }
     },
     {
-      "id": "aff47498-6c04-44a0-a098-d29989bc03fc",
+      "id": "8ea2b424-d4f5-4246-8f4f-d7e10c7e9d5a",
       "name": "Tag 45: Psychology Today",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1417,7 +1417,7 @@
       }
     },
     {
-      "id": "057523de-a778-489d-b4b1-ad7385002789",
+      "id": "c59f3353-523e-451a-a35d-cc244fa48a87",
       "name": "RSS 46: Behavioral Scientist",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1434,7 +1434,7 @@
       }
     },
     {
-      "id": "3a245e38-6424-4a7b-bd5d-29a392f24cf0",
+      "id": "c8458a31-46e0-42a3-b488-e926f3970bca",
       "name": "Tag 46: Behavioral Scientist",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1448,7 +1448,7 @@
       }
     },
     {
-      "id": "cc6fb105-e2b4-4fe0-9a3a-8a21fd8c99c1",
+      "id": "c57785d4-56e9-42df-817c-f6d91ed59920",
       "name": "RSS 47: Scientific American",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1465,7 +1465,7 @@
       }
     },
     {
-      "id": "fa04ea1c-c445-4b8c-924c-13bb5a1b629b",
+      "id": "9be54d06-5398-45dd-9f5d-dedc0835a318",
       "name": "Tag 47: Scientific American",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1479,7 +1479,7 @@
       }
     },
     {
-      "id": "f386afa4-fe9e-4441-918d-2241547101b2",
+      "id": "be80cfec-cf74-4aeb-ab63-15371d5e9d9f",
       "name": "RSS 48: Crunchbase News",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1496,7 +1496,7 @@
       }
     },
     {
-      "id": "47223000-93f2-4526-aa91-0d9680bccbff",
+      "id": "3c320281-6f01-49b9-aa83-440910757a23",
       "name": "Tag 48: Crunchbase News",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1510,7 +1510,7 @@
       }
     },
     {
-      "id": "bd38132b-3243-4c18-80ed-c7ef9fb2f290",
+      "id": "b2ba09b0-1051-4e32-82b9-336becd08cad",
       "name": "RSS 49: a16z Blog",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1527,7 +1527,7 @@
       }
     },
     {
-      "id": "8ab6a50b-b6e2-4f9e-9cc3-bef83f2dd5f7",
+      "id": "51180ce5-b97d-4141-b251-fea94069c502",
       "name": "Tag 49: a16z Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1541,7 +1541,7 @@
       }
     },
     {
-      "id": "98c5e9bd-515f-4c6e-a4eb-d6e2fcd0da2d",
+      "id": "75d426a1-296f-4451-9240-518a60abf265",
       "name": "RSS 50: Y Combinator Blog",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1558,7 +1558,7 @@
       }
     },
     {
-      "id": "359a9b97-b307-4541-9bf5-79646d760b14",
+      "id": "49c23144-b402-4611-a410-69495d33566c",
       "name": "Tag 50: Y Combinator Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1572,7 +1572,7 @@
       }
     },
     {
-      "id": "6f44f7c3-3241-41f9-a6b9-465634a3f635",
+      "id": "24740949-7533-4584-a7c5-91c23f929409",
       "name": "RSS 51: MIT Sloan Review",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1589,7 +1589,7 @@
       }
     },
     {
-      "id": "a39f5893-485a-49e2-92c4-c77dc6aa2859",
+      "id": "661a9714-9724-45e7-bd11-8b18e049a22e",
       "name": "Tag 51: MIT Sloan Review",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1603,7 +1603,7 @@
       }
     },
     {
-      "id": "b26702f9-9b18-4d1e-bee1-c573bd62fc20",
+      "id": "cc64c0b8-8251-4972-9ddb-5287d5fe6ae8",
       "name": "RSS 52: McKinsey Insights",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1620,7 +1620,7 @@
       }
     },
     {
-      "id": "3fe14be9-7ae3-42e3-a6f3-75cd6c24f553",
+      "id": "84910dd9-86e9-4a74-830a-33e3c98bc480",
       "name": "Tag 52: McKinsey Insights",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1634,7 +1634,7 @@
       }
     },
     {
-      "id": "a8317b2f-908d-43e9-8ab1-b7096ad1d329",
+      "id": "9b0c969c-f665-45d4-98f2-df7a5d6405fe",
       "name": "RSS 53: OPEC",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1651,7 +1651,7 @@
       }
     },
     {
-      "id": "b708daf6-0f09-4001-b050-c4354f1181ec",
+      "id": "53b80b73-7a45-42b5-9adb-204ea4f565d5",
       "name": "Tag 53: OPEC",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1665,7 +1665,7 @@
       }
     },
     {
-      "id": "a392fe90-59eb-4b93-824e-affd95347584",
+      "id": "4910b1a3-63cd-424b-80e1-43c914ec152d",
       "name": "RSS 54: Responsible Investor",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1682,7 +1682,7 @@
       }
     },
     {
-      "id": "f4a13733-73b5-4042-9517-98ce4362c840",
+      "id": "a3c6ccc8-750d-44fd-9b56-b6b609b42e0e",
       "name": "Tag 54: Responsible Investor",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1696,7 +1696,7 @@
       }
     },
     {
-      "id": "6cb2ba57-e10a-4500-a267-1603a12fd9ea",
+      "id": "35371fa6-7965-4410-b8b7-767e0478877e",
       "name": "RSS 55: CoinTelegraph",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1713,7 +1713,7 @@
       }
     },
     {
-      "id": "f953b6e2-f031-442f-b5d1-03a5c4ef6580",
+      "id": "2721e9bd-d31f-4b3e-a1f1-648053aba48c",
       "name": "Tag 55: CoinTelegraph",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1727,7 +1727,7 @@
       }
     },
     {
-      "id": "8906e414-6c83-4304-a793-bebf16383c56",
+      "id": "2dcbf053-0aee-482e-bc70-e46506387c09",
       "name": "RSS 56: Supply Chain Digital",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1744,7 +1744,7 @@
       }
     },
     {
-      "id": "4ce63e3a-4fdc-44d3-b2ba-ed71a2aee49b",
+      "id": "1b779347-d744-47a4-9286-6d71a146002a",
       "name": "Tag 56: Supply Chain Digital",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1758,7 +1758,7 @@
       }
     },
     {
-      "id": "2c953cef-f655-421b-980c-ac7f823f3f7d",
+      "id": "e7962ee7-26cd-4d37-be9f-0d6d09dc8441",
       "name": "RSS 57: Hootsuite Blog",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
@@ -1775,7 +1775,7 @@
       }
     },
     {
-      "id": "5fff0959-278c-47c2-aed1-f38bbe31dacf",
+      "id": "d7d1bf02-fd93-497a-9c77-cdec75a29f6a",
       "name": "Tag 57: Hootsuite Blog",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1789,7 +1789,7 @@
       }
     },
     {
-      "id": "5c6a404c-53ca-4108-bae4-67bb6f2c0815",
+      "id": "b505b386-ec9b-4be7-b3dd-c1bdf312aec1",
       "name": "Merge All Feeds",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
@@ -1802,7 +1802,7 @@
       }
     },
     {
-      "id": "b5aa8069-0c71-4c8d-acc5-40c6e7cdafb0",
+      "id": "2661af42-6485-42d1-808f-fbfa6454bd35",
       "name": "Normalize to Graph Entities",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1815,7 +1815,7 @@
       }
     },
     {
-      "id": "17a6d54d-db70-4199-8af4-a59c79910e58",
+      "id": "7b44a96f-e467-4dcd-b02c-7c29580f5811",
       "name": "LLM Causal Extraction",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1825,11 +1825,11 @@
       ],
       "continueOnFail": true,
       "parameters": {
-        "jsCode": "const items = $input.all();\nconst results = [];\n\nconst SCHEMA = {\n  type: 'object',\n  properties: {\n    causal_triples: {\n      type: 'array',\n      items: {\n        type: 'object',\n        required: ['cause', 'effect', 'attribution_type', 'causal_weight', 'mechanism', 'evidence_span'],\n        properties: {\n          cause:            { type: 'string', description: 'The causing entity or event (name only)' },\n          effect:           { type: 'string', description: 'The resulting entity or event (name only)' },\n          attribution_type: { type: 'string', enum: ['clear', 'indirect', 'ambiguous'] },\n          causal_weight:    { type: 'number', minimum: 0, maximum: 1 },\n          mechanism:        { type: 'string', description: 'Short causal mechanism label' },\n          evidence_span:    { type: 'string', description: 'Exact quote from text supporting this causal claim' }\n        }\n      }\n    },\n    abstain: { type: 'boolean', description: 'Set true if no causal relationship can be identified' }\n  },\n  required: ['causal_triples', 'abstain']\n};\n\nconst OPENAI_BASE = 'https://api.openai.com/v1';\nconst API_KEY = $env.OPENAI_API_KEY || '';\n\nasync function extractCausal(text, entityName) {\n  if (!API_KEY || !text || text.length < 50) return null;\n\n  const prompt = `You are a causal intelligence analyst. Extract causal relationships from the following news text.\n\nRules:\n- Only extract relationships where one entity or event CAUSES or significantly influences another\n- Do NOT extract mere co-occurrence or correlation\n- For each causal triple, cite the exact text span that supports it\n- If no clear causal relationship exists, set abstain=true and return empty causal_triples array\n- attribution_type: \"clear\" = direct stated causation, \"indirect\" = implied through mechanism, \"ambiguous\" = uncertain\n\nText: \"${text.substring(0, 1200)}\"\n\nRespond ONLY with valid JSON matching the schema. No explanation.`;\n\n  try {\n    const resp = await $http.request({\n      method: 'POST',\n      url: `${OPENAI_BASE}/chat/completions`,\n      headers: {\n        'Authorization': `Bearer ${API_KEY}`,\n        'Content-Type': 'application/json'\n      },\n      body: JSON.stringify({\n        model: 'gpt-4.1-mini',\n        messages: [{ role: 'user', content: prompt }],\n        response_format: { type: 'json_object' },\n        max_tokens: 600,\n        temperature: 0.1\n      })\n    });\n\n    const raw = resp.choices?.[0]?.message?.content;\n    if (!raw) return null;\n    const parsed = JSON.parse(raw);\n    if (parsed.abstain || !Array.isArray(parsed.causal_triples)) return null;\n    return parsed.causal_triples.filter(t =>\n      t.cause && t.effect && t.attribution_type && typeof t.causal_weight === 'number'\n    );\n  } catch (e) {\n    return null;\n  }\n}\n\nfor (const item of items) {\n  const a = item.json;\n  if (!a || typeof a !== 'object' || a._empty) {\n    results.push(item);\n    continue;\n  }\n\n  const text = a._raw_text || (a.name + '. ' + (a.properties?.description || ''));\n  const triples = await extractCausal(text, a.name);\n\n  // Merge causal triples into relationships\n  const enrichedRelationships = [...(a.relationships || [])];\n  if (triples && triples.length > 0) {\n    for (const t of triples) {\n      enrichedRelationships.push({\n        targetName: t.effect,\n        targetType: 'political_event',\n        relation: 'causes',\n        confidence: a.confidence * t.causal_weight,\n        causal_weight: t.causal_weight,\n        mechanism: t.mechanism || a.mechanism,\n        attribution_type: t.attribution_type,\n        evidence_span: t.evidence_span?.substring(0, 300) || ''\n      });\n    }\n  }\n\n  // Remove internal _raw_text before sending to graph\n  const { _raw_text, ...cleanEntity } = a;\n  results.push({ json: { ...cleanEntity, relationships: enrichedRelationships } });\n}\n\nreturn results.length > 0 ? results : [{ json: { name: 'empty', type: 'political_event', source: 'system', properties: {}, relationships: [], confidence: 0, causal_weight: 0, mechanism: 'none', _empty: true } }];"
+        "jsCode": "const items = $input.all();\nconst results = [];\n\nconst CAUSAL_TRIGGERS = [\n  { re: /\\bcauses?\\b/i,              type: 'clear',     weight: 0.90 },\n  { re: /\\btriggers?\\b/i,            type: 'clear',     weight: 0.88 },\n  { re: /\\bforces?\\b/i,              type: 'clear',     weight: 0.85 },\n  { re: /\\bdrives?\\b/i,              type: 'clear',     weight: 0.82 },\n  { re: /\\bprompts?\\b/i,             type: 'clear',     weight: 0.80 },\n  { re: /\\bsparks?\\b/i,              type: 'clear',     weight: 0.80 },\n  { re: /\\bleads?\\s+to\\b/i,          type: 'indirect',  weight: 0.75 },\n  { re: /\\bresults?\\s+in\\b/i,        type: 'indirect',  weight: 0.75 },\n  { re: /\\bcontributes?\\s+to\\b/i,    type: 'indirect',  weight: 0.70 },\n  { re: /\\bfuels?\\b/i,               type: 'indirect',  weight: 0.70 },\n  { re: /\\bboosts?\\b/i,              type: 'indirect',  weight: 0.65 },\n  { re: /\\bweakens?\\b/i,             type: 'indirect',  weight: 0.65 },\n  { re: /\\bdamages?\\b/i,             type: 'indirect',  weight: 0.65 },\n  { re: /\\baccelerates?\\b/i,         type: 'indirect',  weight: 0.65 },\n  { re: /\\bworsens?\\b/i,             type: 'indirect',  weight: 0.65 },\n  { re: /\\bincreases?\\b/i,           type: 'indirect',  weight: 0.60 },\n  { re: /\\bdecreases?\\b/i,           type: 'indirect',  weight: 0.60 },\n  { re: /\\braises?\\b/i,              type: 'indirect',  weight: 0.60 },\n  { re: /\\blowers?\\b/i,              type: 'indirect',  weight: 0.60 },\n  { re: /\\bspreads?\\s+to\\b/i,        type: 'indirect',  weight: 0.68 },\n  { re: /\\bspills?\\s+over\\b/i,       type: 'indirect',  weight: 0.70 },\n  { re: /\\bripples?\\s+through\\b/i,   type: 'indirect',  weight: 0.72 },\n  { re: /\\bin\\s+response\\s+to\\b/i,   type: 'ambiguous', weight: 0.55 },\n  { re: /\\bdue\\s+to\\b/i,             type: 'ambiguous', weight: 0.55 },\n  { re: /\\bowing\\s+to\\b/i,           type: 'ambiguous', weight: 0.55 },\n  { re: /\\bas\\s+a\\s+result\\s+of\\b/i, type: 'ambiguous', weight: 0.65 },\n  { re: /\\bfollowing\\b/i,            type: 'ambiguous', weight: 0.40 },\n  { re: /\\bamid\\b/i,                 type: 'ambiguous', weight: 0.35 },\n  { re: /\\bafter\\b/i,                type: 'ambiguous', weight: 0.30 },\n];\n\nconst STOP_WORDS = new Set(['The','A','An','In','On','At','By','To','Of','For','And','But','Or','If','As','With','From','That','This','These','Those','Its','His','Her','Their','Our','We','He','She','They','It','I','You','Mr','Ms','Dr','Prof','said','says','told','according']);\n\nfunction extractEntities(text) {\n  const matches = text.match(/\\b([A-Z][a-zA-Z'-]+(?:\\s+[A-Z][a-zA-Z'-]+){0,4})\\b/g) || [];\n  return [...new Set(matches.map(m => m.trim()).filter(m => m.length > 2 && !STOP_WORDS.has(m.split(' ')[0])))].slice(0, 6);\n}\n\nfunction sentences(text) {\n  return text.replace(/([.!?])\\s+/g, '$1\\n').split('\\n').map(s => s.trim()).filter(s => s.length > 20);\n}\n\nfunction mechanismFrom(trigger) {\n  const t = trigger.toLowerCase();\n  if (/caus|forc|trigger/.test(t)) return 'direct_causation';\n  if (/leads?\\s+to|results?\\s+in|contributes?/.test(t)) return 'causal_chain';\n  if (/fuel|boost|accelerat/.test(t)) return 'amplification';\n  if (/weaken|damage|worsen|lower|decreas/.test(t)) return 'degradation';\n  if (/spread|spill|ripple/.test(t)) return 'contagion';\n  if (/response|following|after|due\\s+to|owing/.test(t)) return 'reactive_response';\n  return 'causal_association';\n}\n\nfunction extractCausalTriples(text) {\n  const triples = [];\n  const seen = new Set();\n  for (const sent of sentences(text)) {\n    for (const trigger of CAUSAL_TRIGGERS) {\n      const match = trigger.re.exec(sent);\n      if (!match) continue;\n      const before = sent.substring(0, match.index).trim();\n      const after = sent.substring(match.index + match[0].length).trim();\n      if (before.length < 3 || after.length < 3) continue;\n      const causeEntities = extractEntities(before);\n      const effectEntities = extractEntities(after);\n      if (!causeEntities.length || !effectEntities.length) continue;\n      const cause = causeEntities[causeEntities.length - 1];\n      const effect = effectEntities[0];\n      if (cause === effect) continue;\n      const key = cause + '|' + effect;\n      if (seen.has(key)) continue;\n      seen.add(key);\n      triples.push({ cause, effect, attribution_type: trigger.type, causal_weight: trigger.weight, mechanism: mechanismFrom(match[0]), evidence_span: sent.substring(0, 250) });\n      if (triples.length >= 5) break;\n    }\n    if (triples.length >= 5) break;\n  }\n  return triples;\n}\n\nfor (const item of items) {\n  const a = item.json;\n  if (!a || typeof a !== 'object' || a._empty) { results.push(item); continue; }\n  const text = a._raw_text || (a.name + '. ' + (a.properties?.description || ''));\n  const triples = extractCausalTriples(text);\n  const enrichedRelationships = [...(a.relationships || [])];\n  for (const t of triples) {\n    enrichedRelationships.push({\n      targetName: t.effect, targetType: 'political_event', relation: 'causes',\n      confidence: Math.round(a.confidence * t.causal_weight * 100) / 100,\n      causal_weight: t.causal_weight, mechanism: t.mechanism,\n      attribution_type: t.attribution_type, evidence_span: t.evidence_span\n    });\n  }\n  const { _raw_text, ...cleanEntity } = a;\n  results.push({ json: { ...cleanEntity, relationships: enrichedRelationships } });\n}\n\nreturn results.length > 0 ? results : [{ json: { name: 'empty', type: 'political_event', source: 'system', properties: {}, relationships: [], confidence: 0, causal_weight: 0, mechanism: 'none', _empty: true } }];"
       }
     },
     {
-      "id": "3f0ee455-b7b0-47d4-90f7-b457e833ac6d",
+      "id": "47938940-3928-45ef-8179-55fb8602c7b5",
       "name": "Wikidata Q-ID Grounding",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1843,7 +1843,7 @@
       }
     },
     {
-      "id": "ed26c3c9-e782-4224-ae63-62e8a2117bdc",
+      "id": "3daa2792-d398-4474-9877-ec4040a58d33",
       "name": "Batch 25 Items",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1856,7 +1856,7 @@
       }
     },
     {
-      "id": "5cc699d3-40fc-4c7a-9483-dfdb1feee166",
+      "id": "0c75b935-e004-432b-b185-d2296fdf13ad",
       "name": "POST Batch to Graph",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -1895,7 +1895,7 @@
       }
     },
     {
-      "id": "d4caacbc-15b2-47bd-9480-c46f39d8929e",
+      "id": "eaa96356-ec74-4388-9441-d52cdca4dd69",
       "name": "Log Results",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -3526,7 +3526,7 @@
     "saveManualExecutions": true,
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "2730d240-7134-4934-80c5-88395d22278d",
+  "versionId": "013a31fd-016b-4c8f-923d-45788e079b6f",
   "meta": {
     "templateCredsSetupCompleted": true
   }
