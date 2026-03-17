@@ -53,6 +53,7 @@ class KnowledgeGraph {
       console.log('URL parsed - Protocol:', parsed.protocol, 'Host:', parsed.hostname, 'Port:', parsed.port);
     } catch (e) {
       console.error('Invalid URL format:', url);
+      // Depending on requirements, we might want to throw here instead of continuing
     }
     
     this.client = createClient({ 
@@ -68,7 +69,6 @@ class KnowledgeGraph {
     
     this.client.on('error', (err) => {
       console.error('KV error:', err.message || err);
-      console.error('Full error:', JSON.stringify(err, Object.getOwnPropertyNames(err)));
     });
     
     this.client.on('connect', () => {
@@ -92,7 +92,6 @@ class KnowledgeGraph {
       console.log('Ping result:', ping);
     } catch (err: any) {
       console.error('Failed to connect to FalkorDB:', err.message || err);
-      console.error('Connection error stack:', err.stack);
       throw err;
     }
 
@@ -104,16 +103,18 @@ class KnowledgeGraph {
     if (this.client) {
       await this.client.quit();
       this.ready = false;
+      this.client = null;
     }
   }
 
   isHealthy(): boolean {
-    return this.ready && this.client?.isReady || false;
+    return this.ready && (this.client?.isReady ?? false);
   }
 
   // ─── INDEXES ──────────────────────────────────────────────────────────────────
 
   private async ensureIndexes(): Promise<void> {
+    // Placeholder for index creation logic
     console.log('Indexes ensured');
   }
 
@@ -126,12 +127,12 @@ class KnowledgeGraph {
     source: string,
     confidence: number = 0.8
   ): Promise<Entity> {
-    if (!this.client) throw new Error('KnowledgeGraph not initialized');
+    this.assertInitialized();
 
     const id = this.entityId(name, type);
     const now = new Date().toISOString();
 
-    const exists = await this.client.hGetAll(`entity:${id}`);
+    const exists = await this.client!.hGetAll(`entity:${id}`);
     const isNew = Object.keys(exists).length === 0;
 
     const entity: Entity = {
@@ -139,14 +140,16 @@ class KnowledgeGraph {
       name,
       type,
       confidence: isNew ? confidence : Math.max(parseFloat(exists.confidence || '0'), confidence),
-      call_count: isNew ? 1 : parseInt(exists.call_count || '0') + 1,
+      call_count: isNew ? 1 : parseInt(exists.call_count || '0', 10) + 1,
       properties: isNew ? properties : { ...JSON.parse(exists.properties || '{}'), ...properties },
-      sources: isNew ? [source] : [...new Set([...JSON.parse(exists.sources || '[]'), source])],
+      sources: isNew ? [source] : Array.from(new Set([...JSON.parse(exists.sources || '[]'), source])),
       first_seen: isNew ? now : exists.first_seen || now,
       last_seen: now,
     };
 
-    await this.client.hSet(`entity:${id}`, {
+    const multi = this.client!.multi();
+    
+    multi.hSet(`entity:${id}`, {
       name: entity.name,
       type: entity.type,
       confidence: entity.confidence.toString(),
@@ -157,34 +160,43 @@ class KnowledgeGraph {
       last_seen: entity.last_seen,
     });
 
-    await this.client.sAdd(`index:type:${type}`, id);
-    await this.client.sAdd(`index:name:${name.toLowerCase()}`, id);
+    multi.sAdd(`index:type:${type}`, id);
+    multi.sAdd(`index:name:${name.toLowerCase()}`, id);
+
+    await multi.exec();
 
     console.log(`Upserted ${type}: ${name} (calls: ${entity.call_count})`);
     return entity;
   }
 
   async findEntity(name: string, type?: EntityType): Promise<Entity[]> {
-    if (!this.client) throw new Error('KnowledgeGraph not initialized');
+    this.assertInitialized();
 
-    const ids = new Set<string>();
-
-    const nameIds = await this.client.sMembers(`index:name:${name.toLowerCase()}`);
-    nameIds.forEach(id => ids.add(id));
+    const nameIds = await this.client!.sMembers(`index:name:${name.toLowerCase()}`);
+    let ids = new Set(nameIds);
 
     if (type) {
-      const typeIds = await this.client.sMembers(`index:type:${type}`);
+      const typeIds = await this.client!.sMembers(`index:type:${type}`);
       const typeSet = new Set(typeIds);
-      for (const id of Array.from(ids)) {
-        if (!typeSet.has(id)) ids.delete(id);
-      }
+      ids = new Set([...ids].filter(id => typeSet.has(id)));
     }
 
-    const entities: Entity[] = [];
+    if (ids.size === 0) return [];
+
+    const multi = this.client!.multi();
     for (const id of ids) {
-      const data = await this.client.hGetAll(`entity:${id}`);
-      if (Object.keys(data).length > 0) {
-        entities.push(this.hydrateEntity(id, data));
+      multi.hGetAll(`entity:${id}`);
+    }
+    
+    const results = await multi.exec() as Record<string, string>[];
+    
+    const entities: Entity[] = [];
+    const idArray = Array.from(ids);
+    
+    for (let i = 0; i < results.length; i++) {
+      const data = results[i];
+      if (data && Object.keys(data).length > 0) {
+        entities.push(this.hydrateEntity(idArray[i], data));
       }
     }
 
@@ -192,41 +204,73 @@ class KnowledgeGraph {
   }
 
   async enrich(identifier: string): Promise<{ entity: Entity | null; related: Record<string, Entity[]>; confidence: number }> {
-    if (!this.client) throw new Error('KnowledgeGraph not initialized');
+    this.assertInitialized();
 
-    let entity = await this.findEntity(identifier);
+    let entities = await this.findEntity(identifier);
     
-    if (entity.length === 0 && identifier.includes('.')) {
+    if (entities.length === 0 && identifier.includes('.')) {
       const domain = identifier.toLowerCase().replace(/^www\./, '').split('/')[0];
-      entity = await this.findEntity(domain);
+      entities = await this.findEntity(domain);
     }
 
-    if (entity.length === 0) {
+    if (entities.length === 0) {
       return { entity: null, related: {}, confidence: 0 };
     }
 
-    const main = entity[0];
+    const main = entities[0];
     const related: Record<string, Entity[]> = {};
 
-    const relIds = await this.client.sMembers(`rel:from:${main.id}`);
-    const relIdsTo = await this.client.sMembers(`rel:to:${main.id}`);
+    const [relIdsFrom, relIdsTo] = await Promise.all([
+      this.client!.sMembers(`rel:from:${main.id}`),
+      this.client!.sMembers(`rel:to:${main.id}`)
+    ]);
     
-    const allRelIds = [...new Set([...relIds, ...relIdsTo])];
+    const allRelIds = Array.from(new Set([...relIdsFrom, ...relIdsTo]));
 
-    for (const relId of allRelIds) {
-      const relData = await this.client.hGetAll(`relationship:${relId}`);
-      if (Object.keys(relData).length === 0) continue;
-
-      const isFrom = relData.from_id === main.id;
-      const otherId = isFrom ? relData.to_id : relData.from_id;
-      const otherData = await this.client.hGetAll(`entity:${otherId}`);
+    if (allRelIds.length > 0) {
+      const relMulti = this.client!.multi();
+      for (const relId of allRelIds) {
+        relMulti.hGetAll(`relationship:${relId}`);
+      }
+      const relResults = await relMulti.exec() as Record<string, string>[];
       
-      if (Object.keys(otherData).length > 0) {
-        const other = this.hydrateEntity(otherId, otherData);
-        const relation = relData.relation;
+      const entityIdsToFetch = new Set<string>();
+      const validRelations: Array<{otherId: string, relation: string}> = [];
+      
+      for (const relData of relResults) {
+        if (!relData || Object.keys(relData).length === 0) continue;
         
-        if (!related[relation]) related[relation] = [];
-        related[relation].push(other);
+        const isFrom = relData.from_id === main.id;
+        const otherId = isFrom ? relData.to_id : relData.from_id;
+        
+        entityIdsToFetch.add(otherId);
+        validRelations.push({ otherId, relation: relData.relation });
+      }
+      
+      if (entityIdsToFetch.size > 0) {
+        const entityMulti = this.client!.multi();
+        const entityIdsArray = Array.from(entityIdsToFetch);
+        for (const id of entityIdsArray) {
+          entityMulti.hGetAll(`entity:${id}`);
+        }
+        
+        const entityResults = await entityMulti.exec() as Record<string, string>[];
+        const entityMap = new Map<string, Entity>();
+        
+        for (let i = 0; i < entityResults.length; i++) {
+          const data = entityResults[i];
+          if (data && Object.keys(data).length > 0) {
+            entityMap.set(entityIdsArray[i], this.hydrateEntity(entityIdsArray[i], data));
+          }
+        }
+        
+        for (const {otherId, relation} of validRelations) {
+          const otherEntity = entityMap.get(otherId);
+          if (otherEntity) {
+            if (!related[relation]) related[relation] = [];
+            related[relation].push(otherEntity);
+          }
+        }
       }
     }
 
@@ -237,89 +281,149 @@ class KnowledgeGraph {
   }
 
   async findConnections(from: string, to: string, maxHops: number = 3): Promise<{ hops: number; path: Entity[]; edges: Relationship[] } | null> {
-    if (!this.client) throw new Error('KnowledgeGraph not initialized');
-
-    const queue: Array<{ id: string; hops: number; path: string[]; edges: string[] }> = [];
-    const visited = new Set<string>();
+    this.assertInitialized();
 
     const fromEntities = await this.findEntity(from);
     if (fromEntities.length === 0) return null;
     
-    const startId = fromEntities[0].id;
-    queue.push({ id: startId, hops: 0, path: [startId], edges: [] });
-    visited.add(startId);
-
     const targetEntities = await this.findEntity(to);
     if (targetEntities.length === 0) return null;
     const targetId = targetEntities[0].id;
+
+    const startId = fromEntities[0].id;
+    
+    // Simple BFS
+    const queue: Array<{ id: string; hops: number; path: string[]; edges: string[] }> = [];
+    const visited = new Set<string>();
+
+    queue.push({ id: startId, hops: 0, path: [startId], edges: [] });
+    visited.add(startId);
 
     while (queue.length > 0) {
       const current = queue.shift()!;
       
       if (current.id === targetId) {
-        const path: Entity[] = [];
-        for (const id of current.path) {
-          const data = await this.client.hGetAll(`entity:${id}`);
-          if (Object.keys(data).length > 0) {
-            path.push(this.hydrateEntity(id, data));
-          }
-        }
-
-        const edges: Relationship[] = [];
-        for (const edgeId of current.edges) {
-          const data = await this.client.hGetAll(`relationship:${edgeId}`);
-          if (Object.keys(data).length > 0) {
-            edges.push(this.hydrateRelationship(edgeId, data));
-          }
-        }
-
-        return { hops: current.hops, path, edges };
+        return this.hydratePathAndEdges(current.path, current.edges, current.hops);
       }
 
       if (current.hops >= maxHops) continue;
 
-      const neighbors = await this.client.sMembers(`rel:from:${current.id}`);
-      for (const relId of neighbors) {
-        const relData = await this.client.hGetAll(`relationship:${relId}`);
-        if (Object.keys(relData).length === 0) continue;
+      const neighbors = await this.client!.sMembers(`rel:from:${current.id}`);
+      
+      if (neighbors.length > 0) {
+        const multi = this.client!.multi();
+        for (const relId of neighbors) {
+          multi.hGetAll(`relationship:${relId}`);
+        }
         
-        const nextId = relData.to_id;
-        if (!visited.has(nextId)) {
-          visited.add(nextId);
-          queue.push({
-            id: nextId,
-            hops: current.hops + 1,
-            path: [...current.path, nextId],
-            edges: [...current.edges, relId]
-          });
+        const relResults = await multi.exec() as Record<string, string>[];
+        
+        for (let i = 0; i < relResults.length; i++) {
+          const relData = relResults[i];
+          if (!relData || Object.keys(relData).length === 0) continue;
+          
+          const nextId = relData.to_id;
+          const relId = neighbors[i];
+          
+          if (!visited.has(nextId)) {
+            visited.add(nextId);
+            queue.push({
+              id: nextId,
+              hops: current.hops + 1,
+              path: [...current.path, nextId],
+              edges: [...current.edges, relId]
+            });
+          }
         }
       }
     }
 
     return null;
   }
+  
+  private async hydratePathAndEdges(pathIds: string[], edgeIds: string[], hops: number) {
+    const path: Entity[] = [];
+    const edges: Relationship[] = [];
+    
+    if (pathIds.length > 0) {
+      const pathMulti = this.client!.multi();
+      for (const id of pathIds) {
+        pathMulti.hGetAll(`entity:${id}`);
+      }
+      const pathResults = await pathMulti.exec() as Record<string, string>[];
+      for (let i = 0; i < pathResults.length; i++) {
+        const data = pathResults[i];
+        if (data && Object.keys(data).length > 0) {
+          path.push(this.hydrateEntity(pathIds[i], data));
+        }
+      }
+    }
+
+    if (edgeIds.length > 0) {
+      const edgeMulti = this.client!.multi();
+      for (const edgeId of edgeIds) {
+        edgeMulti.hGetAll(`relationship:${edgeId}`);
+      }
+      const edgeResults = await edgeMulti.exec() as Record<string, string>[];
+      for (let i = 0; i < edgeResults.length; i++) {
+        const data = edgeResults[i];
+        if (data && Object.keys(data).length > 0) {
+          edges.push(this.hydrateRelationship(edgeIds[i], data));
+        }
+      }
+    }
+
+    return { hops, path, edges };
+  }
 
   async findByIndustryAndLocation(industry: string, location?: string): Promise<Entity[]> {
-    if (!this.client) throw new Error('KnowledgeGraph not initialized');
+    this.assertInitialized();
 
     const industryEntities = await this.findEntity(industry, 'industry');
     if (industryEntities.length === 0) return [];
 
     const results: Entity[] = [];
+    const locationLower = location?.toLowerCase();
     
     for (const ind of industryEntities) {
-      const relIds = await this.client.sMembers(`rel:from:${ind.id}`);
+      const relIds = await this.client!.sMembers(`rel:from:${ind.id}`);
       
+      if (relIds.length === 0) continue;
+      
+      const multi = this.client!.multi();
       for (const relId of relIds) {
-        const relData = await this.client.hGetAll(`relationship:${relId}`);
+        multi.hGetAll(`relationship:${relId}`);
+      }
+      
+      const relResults = await multi.exec() as Record<string, string>[];
+      const validCompanyIds = new Set<string>();
+      
+      for (const relData of relResults) {
+        if (!relData || Object.keys(relData).length === 0) continue;
         if (relData.relation === 'industry' || relData.relation === 'operates_in') {
-          const companyData = await this.client.hGetAll(`entity:${relData.to_id}`);
-          if (Object.keys(companyData).length > 0) {
-            const company = this.hydrateEntity(relData.to_id, companyData);
+          validCompanyIds.add(relData.to_id);
+        }
+      }
+      
+      if (validCompanyIds.size > 0) {
+        const companyIdsArray = Array.from(validCompanyIds);
+        const companyMulti = this.client!.multi();
+        
+        for (const id of companyIdsArray) {
+          companyMulti.hGetAll(`entity:${id}`);
+        }
+        
+        const companyResults = await companyMulti.exec() as Record<string, string>[];
+        
+        for (let i = 0; i < companyResults.length; i++) {
+          const companyData = companyResults[i];
+          if (companyData && Object.keys(companyData).length > 0) {
+            const company = this.hydrateEntity(companyIdsArray[i], companyData);
             
-            if (location) {
-              const companyLoc = company.properties.location || company.properties.city || company.properties.country || '';
-              if (companyLoc.toLowerCase().includes(location.toLowerCase())) {
+            if (locationLower) {
+              const props = company.properties;
+              const companyLoc = String(props.location || props.city || props.country || '').toLowerCase();
+              if (companyLoc.includes(locationLower)) {
                 results.push(company);
               }
             } else {
@@ -339,10 +443,13 @@ class KnowledgeGraph {
     relation: string,
     confidence: number = 0.8
   ): Promise<Relationship> {
-    if (!this.client) throw new Error('KnowledgeGraph not initialized');
+    this.assertInitialized();
 
     const id = `${from.id}-${relation}-${to.id}`;
     const now = new Date().toISOString();
+
+    const exists = await this.client!.hGetAll(`relationship:${id}`);
+    const isNew = Object.keys(exists).length === 0;
 
     const rel: Relationship = {
       id,
@@ -351,18 +458,14 @@ class KnowledgeGraph {
       from_name: from.name,
       to_name: to.name,
       relation,
-      confidence,
-      first_seen: now,
+      confidence: isNew ? confidence : Math.max(parseFloat(exists.confidence || '0'), confidence),
+      first_seen: isNew ? now : exists.first_seen || now,
       last_seen: now,
     };
 
-    const exists = await this.client.hGetAll(`relationship:${id}`);
-    if (Object.keys(exists).length > 0) {
-      rel.first_seen = exists.first_seen || now;
-      rel.confidence = Math.max(parseFloat(exists.confidence || '0'), confidence);
-    }
+    const multi = this.client!.multi();
 
-    await this.client.hSet(`relationship:${id}`, {
+    multi.hSet(`relationship:${id}`, {
       from_id: rel.from_id,
       to_id: rel.to_id,
       from_name: rel.from_name,
@@ -373,9 +476,11 @@ class KnowledgeGraph {
       last_seen: rel.last_seen,
     });
 
-    await this.client.sAdd(`rel:from:${from.id}`, id);
-    await this.client.sAdd(`rel:to:${to.id}`, id);
-    await this.client.sAdd(`rel:type:${relation}`, id);
+    multi.sAdd(`rel:from:${from.id}`, id);
+    multi.sAdd(`rel:to:${to.id}`, id);
+    multi.sAdd(`rel:type:${relation}`, id);
+
+    await multi.exec();
 
     console.log(`Relationship: ${from.name} ${relation} ${to.name}`);
     return rel;
@@ -393,6 +498,8 @@ class KnowledgeGraph {
       const entities = this.extractEntities(toolName, result);
       
       const savedEntities: Entity[] = [];
+      // In a real high-throughput system, we might want to parallelize this
+      // but sequential is safer for now to avoid overwhelming Redis
       for (const e of entities) {
         const saved = await this.upsertEntity(e.name, e.type, e.properties, toolName, e.confidence);
         savedEntities.push(saved);
@@ -405,10 +512,10 @@ class KnowledgeGraph {
           
           let relation = 'related_to';
           if (a.type === 'company' && b.type === 'person') relation = 'employs';
-          if (a.type === 'person' && b.type === 'company') relation = 'works_at';
-          if (a.type === 'company' && b.type === 'industry') relation = 'operates_in';
-          if (a.type === 'company' && b.type === 'technology') relation = 'uses';
-          if (a.type === 'company' && b.type === 'location') relation = 'located_in';
+          else if (a.type === 'person' && b.type === 'company') relation = 'works_at';
+          else if (a.type === 'company' && b.type === 'industry') relation = 'operates_in';
+          else if (a.type === 'company' && b.type === 'technology') relation = 'uses';
+          else if (a.type === 'company' && b.type === 'location') relation = 'located_in';
 
           await this.addRelationship(a, b, relation);
         }
@@ -446,7 +553,7 @@ class KnowledgeGraph {
     }
 
     if (toolName === 'find_emails') {
-      if (result.emails && Array.isArray(result.emails)) {
+      if (Array.isArray(result.emails)) {
         for (const email of result.emails) {
           if (email.name || email.person) {
             entities.push({
@@ -472,7 +579,7 @@ class KnowledgeGraph {
       }
     }
 
-    if (toolName === 'get_company_info' && result.technologies) {
+    if (toolName === 'get_company_info' && Array.isArray(result.technologies)) {
       for (const tech of result.technologies) {
         entities.push({
           name: typeof tech === 'string' ? tech : tech.name,
@@ -510,7 +617,7 @@ class KnowledgeGraph {
       if (text.includes(ind)) industries.push(ind);
     }
 
-    return [...new Set(industries)];
+    return Array.from(new Set(industries));
   }
 
   async getStats(): Promise<{
@@ -519,17 +626,31 @@ class KnowledgeGraph {
     nodes_by_type: Record<string, number>;
     last_updated: string;
   }> {
-    if (!this.client) throw new Error('KnowledgeGraph not initialized');
+    this.assertInitialized();
 
-    const keys = await this.client.keys('entity:*');
-    const relKeys = await this.client.keys('relationship:*');
+    // WARNING: KEYS command is slow and blocks Redis in production
+    // For a real production system, maintain counters using INCR/DECR instead
+    const keys = await this.client!.keys('entity:*');
+    const relKeys = await this.client!.keys('relationship:*');
 
     const nodesByType: Record<string, number> = {};
     
-    for (const key of keys) {
-      const type = await this.client.hGet(key, 'type');
-      if (type) {
-        nodesByType[type] = (nodesByType[type] || 0) + 1;
+    if (keys.length > 0) {
+      // Use multi for batch fetching
+      // Note: If keys.length is very large, this should be chunked
+      const chunkSize = 1000;
+      for (let i = 0; i < keys.length; i += chunkSize) {
+        const chunk = keys.slice(i, i + chunkSize);
+        const multi = this.client!.multi();
+        for (const key of chunk) {
+          multi.hGet(key, 'type');
+        }
+        const types = await multi.exec() as string[];
+        for (const type of types) {
+          if (type) {
+            nodesByType[type] = (nodesByType[type] || 0) + 1;
+          }
+        }
       }
     }
 
@@ -541,6 +662,12 @@ class KnowledgeGraph {
     };
   }
 
+  private assertInitialized(): void {
+    if (!this.client) {
+      throw new Error('KnowledgeGraph not initialized. Call init() first.');
+    }
+  }
+
   private entityId(name: string, type: EntityType): string {
     return `${type}:${name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
   }
@@ -548,29 +675,38 @@ class KnowledgeGraph {
   private hydrateEntity(id: string, data: Record<string, string>): Entity {
     return {
       id,
-      name: data.name,
-      type: data.type as EntityType,
+      name: data.name || 'Unknown',
+      type: (data.type as EntityType) || 'company',
       confidence: parseFloat(data.confidence || '0'),
-      call_count: parseInt(data.call_count || '0'),
-      properties: JSON.parse(data.properties || '{}'),
-      sources: JSON.parse(data.sources || '[]'),
-      first_seen: data.first_seen,
-      last_seen: data.last_seen,
+      call_count: parseInt(data.call_count || '0', 10),
+      properties: this.safeParseJSON(data.properties, {}),
+      sources: this.safeParseJSON(data.sources, []),
+      first_seen: data.first_seen || new Date().toISOString(),
+      last_seen: data.last_seen || new Date().toISOString(),
     };
   }
 
   private hydrateRelationship(id: string, data: Record<string, string>): Relationship {
     return {
       id,
-      from_id: data.from_id,
-      to_id: data.to_id,
-      from_name: data.from_name,
-      to_name: data.to_name,
-      relation: data.relation,
+      from_id: data.from_id || '',
+      to_id: data.to_id || '',
+      from_name: data.from_name || '',
+      to_name: data.to_name || '',
+      relation: data.relation || 'related_to',
       confidence: parseFloat(data.confidence || '0'),
-      first_seen: data.first_seen,
-      last_seen: data.last_seen,
+      first_seen: data.first_seen || new Date().toISOString(),
+      last_seen: data.last_seen || new Date().toISOString(),
     };
+  }
+
+  private safeParseJSON<T>(jsonStr: string | undefined, fallback: T): T {
+    if (!jsonStr) return fallback;
+    try {
+      return JSON.parse(jsonStr) as T;
+    } catch (e) {
+      return fallback;
+    }
   }
 }
 
