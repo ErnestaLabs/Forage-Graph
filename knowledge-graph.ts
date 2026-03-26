@@ -504,7 +504,7 @@ class KnowledgeStore {
       // Inline params directly into query (most reliable across FalkorDB versions)
       let q = query;
       for (const [k, v] of Object.entries(params)) {
-        const replacement = typeof v === 'string' ? `"${v.replace(/"/g, '\\"')}"` : JSON.stringify(v);
+        const replacement = this.cypherValue(v);
         q = q.replace(new RegExp(`\\$${k}\\b`, 'g'), replacement);
       }
 
@@ -515,16 +515,24 @@ class KnowledgeStore {
         q,
       ]);
 
-      // Debug: log raw result structure
-      if (result && Array.isArray(result)) {
-        console.log('[GRAPH RAW]', JSON.stringify(result).substring(0, 500));
-      }
-
       return this.parseGraphResult(result);
     } catch (err: any) {
       console.error('[GRAPH QUERY ERROR]', err.message, 'Query:', query);
       return [];
     }
+  }
+
+  // Convert JS value to Cypher literal syntax
+  private cypherValue(v: any): string {
+    if (v === null || v === undefined) return 'null';
+    if (typeof v === 'string') return `"${v.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+    if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+    if (Array.isArray(v)) return `[${v.map(x => this.cypherValue(x)).join(', ')}]`;
+    if (typeof v === 'object') {
+      const pairs = Object.entries(v).map(([key, val]) => `${key}: ${this.cypherValue(val)}`);
+      return `{${pairs.join(', ')}}`;
+    }
+    return String(v);
   }
 
   private parseGraphResult(raw: any): any[] {
