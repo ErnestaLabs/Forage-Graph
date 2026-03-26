@@ -37,6 +37,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { knowledgeGraph } from './knowledge-graph.js';
+import { createCausalEngine, CrashEvent, CausalFactor } from './causal-inference.js';
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -506,7 +507,16 @@ app.post('/ingest/connections', async (req: Request, res: Response) => {
 
 app.post('/ingest/bulk', async (req: Request, res: Response) => {
   try {
-    const { entities = [], connections = [] } = req.body;
+    let { entities = [], connections = [] } = req.body;
+
+    // Normalize entities to ensure sources is always an array
+    entities = entities.map((e: any) => ({
+      ...e,
+      source: e.source || 'bulk_load',
+      sources: Array.isArray(e.sources) ? e.sources : (e.sources ? [e.sources] : []),
+      // Force new nodes to avoid merge issue with existing buggy data
+      _force_new: true,
+    }));
 
     const entityResult = await knowledgeGraph.addEntities(entities);
     const connResult = await knowledgeGraph.addConnections(connections);
@@ -1056,6 +1066,737 @@ app.post('/ingest_raw_batch', async (req: Request, res: Response) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// CRASH CAUSAL INTELLIGENCE API [crash-api-001]
+// Higher-level endpoints for answering "what caused the crash and why?"
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Initialize causal engine lazily
+let causalEngine: ReturnType<typeof createCausalEngine> | null = null;
+
+async function getCausalEngine() {
+  if (causalEngine) return causalEngine;
+
+  // Get Redis client from knowledge graph's internal DB
+  const db = (knowledgeGraph as any).db;
+  if (!db || !db.getClient()) return null;
+
+  causalEngine = createCausalEngine(db.getClient(), db.getGraphName());
+  return causalEngine;
+}
+
+// ─── /crash/explain ──────────────────────────────────────────────────────────
+// Explain a crash: trace causal paths, identify root causes, summarize
+//
+// Body: { crash: string }
+// Returns: Full crash explanation with causal paths, mechanisms, affected entities
+
+app.post('/crash/explain', async (req: Request, res: Response) => {
+  try {
+    const { crash } = req.body;
+    if (!crash) {
+      res.status(400).json({ error: 'crash name is required' });
+      return;
+    }
+
+    const engine = await getCausalEngine();
+    if (!engine) {
+      res.status(503).json({ error: 'Causal engine not available' });
+      return;
+    }
+
+    const explanation = await engine.explainCrash(crash);
+
+    if (!explanation) {
+      res.json({
+        crash,
+        found: false,
+        message: 'Crash not found in graph. Load crash data first with crash_loader.py',
+      });
+      return;
+    }
+
+    res.json({
+      crash: explanation.crash.name,
+      found: true,
+      peak_drawdown_pct: explanation.crash.peak_drawdown_pct,
+      date_range: {
+        start: explanation.crash.start_date,
+        peak: explanation.crash.peak_date,
+        end: explanation.crash.end_date,
+      },
+      root_causes: explanation.root_causes.slice(0, 5).map(c => ({
+        name: c.name,
+        causal_weight: c.causal_weight,
+        mechanism: c.mechanism,
+        confidence: c.confidence,
+      })),
+      transmission_mechanisms: explanation.transmission_mechanisms,
+      causal_paths: explanation.causal_paths.slice(0, 5).map(p => ({
+        nodes: p.nodes,
+        total_weight: p.total_weight,
+        narrative: p.narrative,
+      })),
+      most_affected: explanation.most_affected.slice(0, 10),
+      summary: explanation.summary,
+      detailed_narrative: explanation.detailed_narrative,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── /crash/counterfactual ───────────────────────────────────────────────────
+// Simulate a counterfactual: "What if X didn't happen?"
+//
+// Body: {
+//   crash: string,
+//   intervention: {
+//     type: 'remove_factor' | 'early_intervention' | 'limit_exposure' | 'circuit_breaker',
+//     target_entity: string,
+//     intervention_date?: string,
+//     parameters?: object
+//   }
+// }
+
+app.post('/crash/counterfactual', async (req: Request, res: Response) => {
+  try {
+    const { crash, intervention } = req.body;
+    if (!crash || !intervention) {
+      res.status(400).json({ error: 'crash and intervention are required' });
+      return;
+    }
+
+    if (!intervention.type || !intervention.target_entity) {
+      res.status(400).json({ error: 'intervention must include type and target_entity' });
+      return;
+    }
+
+    const engine = await getCausalEngine();
+    if (!engine) {
+      res.status(503).json({ error: 'Causal engine not available' });
+      return;
+    }
+
+    const scenario = await engine.simulateCounterfactual(crash, {
+      type: intervention.type,
+      target_entity: intervention.target_entity,
+      intervention_date: intervention.intervention_date || new Date().toISOString(),
+      parameters: intervention.parameters || {},
+    });
+
+    if (!scenario) {
+      res.json({
+        crash,
+        found: false,
+        message: 'Crash not found in graph',
+      });
+      return;
+    }
+
+    res.json({
+      crash,
+      scenario_id: scenario.scenario_id,
+      intervention: scenario.intervention,
+      simulated_drawdown_pct: scenario.simulated_drawdown_pct,
+      entities_saved: scenario.entities_saved,
+      cascade_prevented: scenario.cascade_prevented,
+      confidence: scenario.confidence,
+      interpretation: scenario.cascade_prevented
+        ? `Intervention "${intervention.type}" on ${intervention.target_entity} would likely have prevented the cascade`
+        : `Intervention would have reduced drawdown from baseline to ${scenario.simulated_drawdown_pct}%`,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── /crash/add ──────────────────────────────────────────────────────────────
+// Add a crash event to the graph (for programmatic ingestion)
+//
+// Body: CrashEvent object
+
+app.post('/crash/add', async (req: Request, res: Response) => {
+  try {
+    const crash: CrashEvent = req.body;
+
+    if (!crash.crash_id || !crash.name || !crash.crash_type) {
+      res.status(400).json({ error: 'crash_id, name, and crash_type are required' });
+      return;
+    }
+
+    const engine = await getCausalEngine();
+    if (!engine) {
+      res.status(503).json({ error: 'Causal engine not available' });
+      return;
+    }
+
+    await engine.addCrashEvent(crash);
+
+    res.status(201).json({
+      success: true,
+      crash_id: crash.crash_id,
+      name: crash.name,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── /crash/link_factor ──────────────────────────────────────────────────────
+// Link a causal factor to a crash
+//
+// Body: {
+//   crash_id: string,
+//   factor: CausalFactor,
+//   relation?: 'TRIGGERED' | 'SHOCKED' | 'AMPLIFIED_CRASH'
+// }
+
+app.post('/crash/link_factor', async (req: Request, res: Response) => {
+  try {
+    const { crash_id, factor, relation = 'TRIGGERED' } = req.body;
+
+    if (!crash_id || !factor) {
+      res.status(400).json({ error: 'crash_id and factor are required' });
+      return;
+    }
+
+    if (!factor.factor_id || !factor.name || !factor.type) {
+      res.status(400).json({ error: 'factor must include factor_id, name, and type' });
+      return;
+    }
+
+    const engine = await getCausalEngine();
+    if (!engine) {
+      res.status(503).json({ error: 'Causal engine not available' });
+      return;
+    }
+
+    await engine.linkCausalFactor(crash_id, factor, relation);
+
+    res.status(201).json({
+      success: true,
+      crash_id,
+      factor: factor.name,
+      relation,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── /regime/now ─────────────────────────────────────────────────────────────
+// Get current global regime summary
+//
+// Returns: Current regime classification with confidence
+
+app.get('/regime/now', async (_req: Request, res: Response) => {
+  try {
+    // Query for recent regime-tagged entities
+    const db = (knowledgeGraph as any).db;
+    if (!db) {
+      res.status(503).json({ error: 'Database not available' });
+      return;
+    }
+
+    // Get distribution of current regimes
+    const regimeQuery = `
+      MATCH (n:Entity)
+      WHERE n.regime IS NOT NULL
+      RETURN n.regime AS regime, count(n) AS count
+      ORDER BY count DESC
+    `;
+
+    const result = await db.graphQuery(regimeQuery, {});
+
+    // Compute dominant regime
+    let totalCount = 0;
+    const regimeCounts: Record<string, number> = {};
+
+    for (const row of result) {
+      const regime = row.regime || 'normal';
+      const count = parseInt(row.count) || 0;
+      regimeCounts[regime] = count;
+      totalCount += count;
+    }
+
+    // Determine dominant regime
+    let dominantRegime = 'normal';
+    let maxCount = 0;
+    for (const [regime, count] of Object.entries(regimeCounts)) {
+      if (count > maxCount) {
+        maxCount = count;
+        dominantRegime = regime;
+      }
+    }
+
+    const confidence = totalCount > 0 ? maxCount / totalCount : 0.5;
+
+    res.json({
+      current_regime: dominantRegime,
+      confidence: Math.round(confidence * 100) / 100,
+      regime_distribution: regimeCounts,
+      entities_classified: totalCount,
+      interpretation: {
+        normal: 'Standard market conditions, no elevated stress',
+        stressed: 'Elevated volatility, defensive sentiment detected',
+        pre_tipping: 'Critical state, potential cascade imminent',
+        post_event: 'Recovery phase following major event',
+      }[dominantRegime] || 'Unknown regime state',
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── /portfolio/risk_map ─────────────────────────────────────────────────────
+// Analyze portfolio exposure to crashes, channels, and regimes
+//
+// Body: {
+//   positions: Array<{ entity: string, weight: number }>
+// }
+
+app.post('/portfolio/risk_map', async (req: Request, res: Response) => {
+  try {
+    const { positions } = req.body;
+    if (!positions || !Array.isArray(positions)) {
+      res.status(400).json({ error: 'positions array is required' });
+      return;
+    }
+
+    const exposures: Record<string, number> = {
+      credit: 0,
+      liquidity: 0,
+      sentiment: 0,
+      supply_chain: 0,
+      counterparty: 0,
+    };
+
+    const crashExposures: Array<{
+      crash: string;
+      exposure: number;
+      affected_positions: string[];
+    }> = [];
+
+    // Analyze each position
+    for (const pos of positions) {
+      const { entity, weight } = pos;
+      if (!entity || weight === undefined) continue;
+
+      // Get entity's crash exposures
+      const neighbors = await knowledgeGraph.getNeighbours(entity);
+
+      for (const { edge, neighbour } of neighbors) {
+        // Check for crash exposure
+        if (neighbour.type && neighbour.type.includes('Crash')) {
+          const existing = crashExposures.find(c => c.crash === neighbour.name);
+          if (existing) {
+            existing.exposure += weight * (edge.confidence || 0.5);
+            existing.affected_positions.push(entity);
+          } else {
+            crashExposures.push({
+              crash: neighbour.name,
+              exposure: weight * (edge.confidence || 0.5),
+              affected_positions: [entity],
+            });
+          }
+        }
+
+        // Check for channel exposure
+        if (neighbour.type === 'RiskChannel') {
+          const channelType = neighbour.properties?.channel_type || 'unknown';
+          if (exposures[channelType] !== undefined) {
+            exposures[channelType] += weight * (edge.confidence || 0.5);
+          }
+        }
+      }
+    }
+
+    // Normalize exposures
+    const totalWeight = positions.reduce((sum, p) => sum + (p.weight || 0), 0);
+    if (totalWeight > 0) {
+      for (const key of Object.keys(exposures)) {
+        exposures[key] = Math.round((exposures[key] / totalWeight) * 100) / 100;
+      }
+    }
+
+    res.json({
+      portfolio_summary: {
+        positions_count: positions.length,
+        total_weight: totalWeight,
+      },
+      channel_exposures: exposures,
+      crash_exposures: crashExposures.sort((a, b) => b.exposure - a.exposure).slice(0, 5),
+      highest_risk: Object.entries(exposures)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([channel, exposure]) => ({
+          channel,
+          exposure,
+          warning: exposure > 0.3 ? 'HIGH' : exposure > 0.15 ? 'MEDIUM' : 'LOW',
+        })),
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── /narrative/brief ────────────────────────────────────────────────────────
+// Get active narratives for an asset/entity
+//
+// Body: { entity: string }
+
+app.post('/narrative/brief', async (req: Request, res: Response) => {
+  try {
+    const { entity } = req.body;
+    if (!entity) {
+      res.status(400).json({ error: 'entity is required' });
+      return;
+    }
+
+    // Find entity
+    const entities = await knowledgeGraph.findEntity(entity);
+    if (!entities.length) {
+      res.json({ entity, found: false, narratives: [] });
+      return;
+    }
+
+    const entityId = entities[0].id;
+
+    // Get connected narratives
+    const neighbors = await knowledgeGraph.getNeighbours(entityId);
+    const narratives = neighbors
+      .filter(n => n.neighbour.type === 'Narrative')
+      .map(n => ({
+        narrative: n.neighbour.name,
+        theme: n.neighbour.properties?.theme || n.neighbour.name,
+        strength: n.edge.confidence || 0.5,
+        relation: n.edge.relation,
+      }))
+      .sort((a, b) => b.strength - a.strength);
+
+    res.json({
+      entity: entities[0].name,
+      entity_type: entities[0].type,
+      found: true,
+      active_narratives: narratives.slice(0, 10),
+      dominant_narrative: narratives.length > 0 ? narratives[0].narrative : null,
+      narrative_strength: narratives.length > 0 ? narratives[0].strength : 0,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── /event/explain ──────────────────────────────────────────────────────────
+// Explain any MacroEvent or Crash via causal tree traversal
+//
+// Body: { event: string } or { crash: string }
+
+app.post('/event/explain', async (req: Request, res: Response) => {
+  try {
+    const { event, crash } = req.body;
+    const target = event || crash;
+    if (!target) {
+      res.status(400).json({ error: 'event or crash name is required' });
+      return;
+    }
+
+    const db = (knowledgeGraph as any).db;
+    if (!db) {
+      res.status(503).json({ error: 'Database not available' });
+      return;
+    }
+
+    // Find the target entity
+    const findQuery = `
+      MATCH (e:Entity)
+      WHERE e.name_lower CONTAINS "${target.toLowerCase().replace(/"/g, '\\"')}"
+        AND e.type IN ['MarketCrash', 'SectorCrash', 'FlashCrash', 'BankRun',
+                       'LiquidityCrisis', 'CurrencyCrisis', 'MacroEvent', 'Event']
+      RETURN e.id AS id, e.name AS name, e.type AS type,
+             e.peak_drawdown_pct AS drawdown, e.start_date AS start_date,
+             e.regime_before AS regime_before, e.regime_during AS regime_during
+      LIMIT 1
+    `;
+    const found = await db.graphQuery(findQuery, {});
+    if (!found || found.length === 0) {
+      res.json({ event: target, found: false, explanation: null });
+      return;
+    }
+
+    const entity = found[0];
+    const entityId = entity.id;
+
+    // Get causal factors (upstream TRIGGERED edges)
+    const factorsQuery = `
+      MATCH (factor:Entity)-[r:RELATES]->(crash:Entity {id: "${entityId}"})
+      WHERE r.relation IN ['TRIGGERED', 'SHOCKED', 'causes', 'caused_by']
+      RETURN factor.id AS id, factor.name AS name, factor.type AS type,
+             r.causal_weight AS weight, factor.mechanism AS mechanism,
+             factor.preceded_crash_by_days AS lead_days
+      ORDER BY r.causal_weight DESC
+      LIMIT 10
+    `;
+    const factors = await db.graphQuery(factorsQuery, {});
+
+    // Get channels this event propagated through
+    const channelsQuery = `
+      MATCH (e:Entity {id: "${entityId}"})-[r:RELATES]->(ch:Entity {type: 'Channel'})
+      WHERE r.relation IN ['TRANSMITS_THROUGH', 'TRANSMITTED_THROUGH']
+      RETURN ch.channel_type AS channel, ch.name AS name,
+             r.confidence AS strength, r.lag_hours AS lag_hours
+      ORDER BY r.confidence DESC
+    `;
+    const channels = await db.graphQuery(channelsQuery, {});
+
+    // Get affected entities
+    const affectedQuery = `
+      MATCH (e:Entity {id: "${entityId}"})-[r:RELATES]->(affected:Entity)
+      WHERE r.relation IN ['CRASHED', 'impacts', 'PROPAGATED_TO', 'CASCADED_TO']
+        AND affected.type IN ['Corporation', 'Company', 'FinancialInstitution', 'Asset', 'Industry']
+      RETURN affected.name AS name, affected.type AS type,
+             r.relation AS impact_type, r.confidence AS severity
+      ORDER BY r.confidence DESC
+      LIMIT 20
+    `;
+    const affected = await db.graphQuery(affectedQuery, {});
+
+    // Get narratives
+    const narrativeQuery = `
+      MATCH (e:Entity {id: "${entityId}"})-[r:RELATES]->(n:Entity {type: 'Narrative'})
+      WHERE r.relation = 'DRIVES_NARRATIVE'
+      RETURN n.name AS narrative, n.theme AS theme,
+             n.sentiment_score AS sentiment, r.contribution_weight AS weight
+      ORDER BY r.contribution_weight DESC
+    `;
+    const narratives = await db.graphQuery(narrativeQuery, {});
+
+    // Get causal chain summary if exists
+    const chainQuery = `
+      MATCH (e:Entity {id: "${entityId}"})-[r:RELATES]->(chain:Entity {type: 'CausalChain'})
+      WHERE r.relation = 'PART_OF_CHAIN'
+      RETURN chain.summary AS summary, chain.depth AS depth
+      LIMIT 1
+    `;
+    const chains = await db.graphQuery(chainQuery, {});
+
+    // Get regime context
+    const regimeQuery = `
+      MATCH (e:Entity {id: "${entityId}"})-[r:RELATES]->(regime:Entity {type: 'Regime'})
+      WHERE r.relation = 'IN_REGIME'
+      RETURN regime.regime_state AS state, regime.name AS name, r.since AS since
+      LIMIT 1
+    `;
+    const regimes = await db.graphQuery(regimeQuery, {});
+
+    res.json({
+      event: {
+        id: entityId,
+        name: entity.name,
+        type: entity.type,
+        drawdown_pct: entity.drawdown,
+        start_date: entity.start_date,
+      },
+      found: true,
+      causal_factors: factors.map((f: any) => ({
+        name: f.name,
+        type: f.type,
+        causal_weight: parseFloat(f.weight) || 0,
+        mechanism: f.mechanism,
+        lead_days: parseInt(f.lead_days) || 0,
+      })),
+      transmission_channels: channels.map((ch: any) => ({
+        channel: ch.channel,
+        name: ch.name,
+        strength: parseFloat(ch.strength) || 0,
+        lag_hours: parseInt(ch.lag_hours) || 0,
+      })),
+      affected_entities: affected.map((a: any) => ({
+        name: a.name,
+        type: a.type,
+        impact_type: a.impact_type,
+        severity: parseFloat(a.severity) || 0,
+      })),
+      narratives: narratives.map((n: any) => ({
+        narrative: n.narrative,
+        theme: n.theme,
+        sentiment: parseFloat(n.sentiment) || 0,
+        weight: parseFloat(n.weight) || 0,
+      })),
+      causal_chain: chains.length > 0 ? {
+        summary: chains[0].summary,
+        depth: parseInt(chains[0].depth) || 0,
+      } : null,
+      regime: regimes.length > 0 ? {
+        state: regimes[0].state,
+        name: regimes[0].name,
+        since: regimes[0].since,
+      } : { state: entity.regime_during || 'unknown' },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── /plan/scenarios ────────────────────────────────────────────────────────
+// Generate scenario plans for a portfolio or entity
+//
+// Body: {
+//   target: string,           // Entity or crash to plan around
+//   portfolio?: Array<{ entity: string, weight: number }>,
+//   variants?: Array<{ name: string, shock_magnitude: number }>
+// }
+
+app.post('/plan/scenarios', async (req: Request, res: Response) => {
+  try {
+    const { target, portfolio, variants } = req.body;
+    if (!target) {
+      res.status(400).json({ error: 'target entity/crash name is required' });
+      return;
+    }
+
+    const db = (knowledgeGraph as any).db;
+    if (!db) {
+      res.status(503).json({ error: 'Database not available' });
+      return;
+    }
+
+    // Find relevant historical crashes/events
+    const scenariosQuery = `
+      MATCH (e:Entity)
+      WHERE (e.name_lower CONTAINS "${target.toLowerCase().replace(/"/g, '\\"')}"
+             OR e.type IN ['MarketCrash', 'SectorCrash', 'BankRun'])
+        AND e.type IN ['MarketCrash', 'SectorCrash', 'FlashCrash', 'BankRun',
+                       'LiquidityCrisis', 'CurrencyCrisis']
+      RETURN e.id AS id, e.name AS name, e.type AS type,
+             e.peak_drawdown_pct AS drawdown, e.start_date AS start_date,
+             e.recovery_days AS recovery_days
+      ORDER BY e.peak_drawdown_pct ASC
+      LIMIT 5
+    `;
+    const scenarios = await db.graphQuery(scenariosQuery, {});
+
+    // Get simulated outcomes if any exist
+    const simQuery = `
+      MATCH (s:Entity {type: 'Scenario'})-[r:RELATES]->(o:Entity {type: 'SimulatedOutcome'})
+      WHERE s.name_lower CONTAINS "${target.toLowerCase().replace(/"/g, '\\"')}"
+      RETURN s.name AS scenario_name, o.drawdown_pct AS drawdown,
+             o.confidence AS confidence, o.peak_intensity AS intensity
+      ORDER BY o.drawdown_pct ASC
+      LIMIT 10
+    `;
+    const simulated = await db.graphQuery(simQuery, {});
+
+    // Compute portfolio exposure if provided
+    let portfolioExposure = null;
+    if (portfolio && Array.isArray(portfolio)) {
+      const exposures: Record<string, number> = {
+        credit: 0, liquidity: 0, sentiment: 0,
+        supply_chain: 0, counterparty: 0, regulation: 0,
+      };
+
+      const totalWeight = portfolio.reduce((sum: number, p: any) => sum + (p.weight || 0), 0);
+
+      for (const pos of portfolio.slice(0, 20)) {
+        const neighbors = await knowledgeGraph.getNeighbours(pos.entity);
+        const weight = totalWeight > 0 ? (pos.weight || 0) / totalWeight : 0;
+
+        for (const { edge, neighbour } of neighbors) {
+          if (neighbour.type === 'Channel') {
+            const chType = neighbour.properties?.channel_type;
+            if (chType && exposures[chType] !== undefined) {
+              exposures[chType] += weight * (edge.confidence || 0.5);
+            }
+          }
+        }
+      }
+
+      portfolioExposure = {
+        positions_count: portfolio.length,
+        channel_exposures: Object.fromEntries(
+          Object.entries(exposures).map(([k, v]) => [k, Math.round(v * 100) / 100])
+        ),
+      };
+    }
+
+    // Generate scenario variants
+    const defaultVariants = [
+      { name: 'mild', shock_magnitude: 0.5, description: 'Mild shock, single-channel' },
+      { name: 'moderate', shock_magnitude: 1.0, description: 'Historical baseline replay' },
+      { name: 'severe', shock_magnitude: 1.5, description: 'Amplified multi-channel contagion' },
+      { name: 'systemic', shock_magnitude: 2.0, description: 'Full systemic cascade' },
+    ];
+
+    const activeVariants = variants || defaultVariants;
+
+    // Build projected outcomes from historical data
+    const projectedOutcomes = scenarios.map((s: any) => {
+      const baseDrawdown = parseFloat(s.drawdown) || -10;
+      return activeVariants.map((v: any) => ({
+        scenario: s.name,
+        variant: v.name,
+        projected_drawdown: Math.round(baseDrawdown * v.shock_magnitude * 10) / 10,
+        recovery_days: Math.round((parseInt(s.recovery_days) || 90) * v.shock_magnitude),
+        confidence: Math.max(0.3, 0.8 - (v.shock_magnitude - 1) * 0.2),
+      }));
+    }).flat();
+
+    // Recommendations
+    const recommendations = [];
+    const worstCase = projectedOutcomes.length > 0
+      ? Math.min(...projectedOutcomes.map((o: any) => o.projected_drawdown))
+      : -10;
+
+    if (worstCase < -30) {
+      recommendations.push({
+        action: 'reduce_exposure',
+        urgency: 'high',
+        description: `Worst-case ${worstCase}% drawdown — reduce concentrated positions`,
+      });
+    }
+    if (worstCase < -15) {
+      recommendations.push({
+        action: 'hedge_tail_risk',
+        urgency: 'medium',
+        description: 'Consider protective puts or CDS for exposed sectors',
+      });
+    }
+    recommendations.push({
+      action: 'monitor_channels',
+      urgency: 'low',
+      description: 'Monitor credit spreads, VIX, and funding rates for early signals',
+    });
+
+    res.json({
+      target,
+      historical_scenarios: scenarios.map((s: any) => ({
+        name: s.name,
+        type: s.type,
+        drawdown_pct: parseFloat(s.drawdown) || 0,
+        start_date: s.start_date,
+        recovery_days: parseInt(s.recovery_days) || 0,
+      })),
+      simulated_outcomes: simulated.map((s: any) => ({
+        scenario: s.scenario_name,
+        drawdown_pct: parseFloat(s.drawdown) || 0,
+        confidence: parseFloat(s.confidence) || 0,
+        intensity: parseFloat(s.intensity) || 0,
+      })),
+      projected_outcomes: projectedOutcomes,
+      portfolio_exposure: portfolioExposure,
+      recommendations,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── START ────────────────────────────────────────────────────────────────────
 
 async function start() {
@@ -1065,6 +1806,8 @@ async function start() {
     console.log(`Forage Reality Graph API running on port ${PORT}`);
     console.log(`Health: http://localhost:${PORT}/health`);
     console.log(`Features: FIBO schema, ULEM dual-hash, Hawkes contagion, Adamic-Adar prediction`);
+    console.log(`Crash Intelligence: /crash/explain, /crash/counterfactual, /regime/now, /portfolio/risk_map`);
+    console.log(`Regime-Aware: /event/explain, /plan/scenarios, /narrative/brief`);
   });
 }
 

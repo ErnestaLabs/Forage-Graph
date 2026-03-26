@@ -71,10 +71,80 @@ export type EntityType =
   | 'Actor'                // Political/financial actors
   | 'Network'              // Organizational networks
 
+  // Regime-Aware Layer [regime-001]
+  | 'Channel'              // Risk transmission channel (credit, liquidity, sentiment, etc.)
+  | 'CausalChain'          // Materialized causal path between root cause and crash
+  | 'Portfolio'            // Portfolio exposure tracking
+  | 'Scenario'             // MiroFish scenario container
+  | 'SimulatedOutcome'     // Serialized MiroFish simulation result
+  | 'SimulatedCrash'       // Simulated crash based on real pattern
+  | 'SimulatedNarrative'   // Simulated narrative based on real pattern
+  | 'DataSource'           // Data provenance: source system
+  | 'RawData'              // Data provenance: raw ingested content
+  | 'TimeSeriesPoint'      // Time-series data point (FRED, prices, etc.)
+  | 'SentimentPoint'       // Sentiment measurement point
+
   // Simulation Layer [sim-001]
   // SimAgents can READS_FROM Reality but cannot modify it
   | 'SimAgent'             // Simulation agent (AI personas, what-if actors)
-  | 'SimEpisode';          // Simulation episode (counterfactual scenarios)
+  | 'SimEpisode'           // Simulation episode (counterfactual scenarios)
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CRASH CAUSAL INTELLIGENCE [crash-001]
+  // Higher-level constructs for answering "what caused the crash and why"
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Market Event Types
+  | 'MarketCrash'          // Major market drawdown event (>10% drop)
+  | 'SectorCrash'          // Sector-specific collapse
+  | 'FlashCrash'           // Rapid intraday crash (<1 hour)
+  | 'CurrencyCrisis'       // Currency collapse event
+  | 'SovereignDefault'     // Government debt default
+  | 'BankRun'              // Financial institution run
+  | 'LiquidityCrisis'      // Market-wide liquidity freeze
+
+  // Transmission Mechanisms [crash-mechanism-001]
+  | 'CrashMechanism'       // HOW the crash propagated
+  | 'MarginCall'           // Forced liquidation cascade
+  | 'DebtContagion'        // Credit default cascade
+  | 'PanicSelling'         // Behavioral contagion
+  | 'HerdBehavior'         // Momentum-driven cascade
+  | 'AlgorithmicCascade'   // HFT/algo-driven waterfall
+
+  // Risk Channels [crash-channel-001]
+  | 'RiskChannel'          // WHERE risk flows through
+  | 'LeverageExposure'     // Leveraged position risk
+  | 'DerivativeExposure'   // Options/futures/swaps exposure
+  | 'CreditLine'           // Counterparty credit risk
+  | 'CollateralChain'      // Rehypothecation/collateral risk
+  | 'FundingChannel'       // Short-term funding dependency
+
+  // Structural Vulnerabilities [crash-vuln-001]
+  | 'SystemicVulnerability'  // Structural weakness in system
+  | 'ConcentrationRisk'      // Over-concentration in positions
+  | 'MaturityMismatch'       // Asset/liability duration gap
+  | 'HiddenLeverage'         // Off-balance-sheet leverage
+  | 'RegulatoryCap'          // Regulatory intervention threshold
+
+  // Causal Factors [crash-factor-001]
+  | 'CrashFactor'          // Root cause category
+  | 'MonetaryShock'        // Central bank action
+  | 'GeopoliticalShock'    // War, sanctions, political crisis
+  | 'PandemicShock'        // Health crisis impact
+  | 'TechFailure'          // Infrastructure/system failure
+  | 'FraudRevelation'      // Major fraud uncovered (e.g., Madoff)
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SELF-ORGANIZING AGENT ECOSYSTEM [ecosystem-001]
+  // Gig marketplace, tokenomics, coalitions, and payment flows
+  // ═══════════════════════════════════════════════════════════════════════════
+  | 'Gig'                  // Work unit posted by a Client, performed by an AutonomousAgent
+  | 'Token'                // Utility/payment token for agent ecosystem
+  | 'Client'               // FIBO: Client — entity that posts Gigs and funds work
+  | 'Payment'              // Payment event between Client → AutonomousAgent (via Token)
+  | 'Burn'                 // Token burn event (deflationary mechanism)
+  | 'Coalition'            // Ad-hoc agent coalition formed for complex Gigs
+  | 'Simulation';          // End-to-end simulation run (wraps SimEpisode set)
 
 export type RelationType =
   // FIBO Role Pattern Relationships [fibo-role-001]
@@ -147,7 +217,92 @@ export type RelationType =
   // SimAgent → Reality boundary (read-only)
   | 'READS_FROM'            // SimAgent reads from Reality node (immutable)
   | 'SIMULATES'             // SimEpisode simulates scenario
-  | 'HYPOTHESIZES';         // SimAgent hypothesizes connection
+  | 'HYPOTHESIZES'          // SimAgent hypothesizes connection
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CRASH CAUSAL RELATIONS [crash-rel-001]
+  // Higher-level causal edges for crash analysis
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Direct Crash Causation
+  | 'TRIGGERED'             // Factor directly triggered crash
+  | 'SHOCKED'               // Event shocked entity/market
+  | 'CRASHED'               // Entity crashed (as state change)
+
+  // Exposure & Vulnerability
+  | 'EXPOSED_TO'            // Entity exposed to risk/crash
+  | 'VULNERABLE_TO'         // Entity vulnerable to mechanism
+  | 'CONCENTRATED_IN'       // Entity over-concentrated in position
+  | 'LEVERAGED_IN'          // Entity has leveraged exposure to
+
+  // Transmission & Propagation
+  | 'TRANSMITTED_THROUGH'   // Shock transmitted through channel
+  | 'PROPAGATED_TO'         // Contagion propagated to entity
+  | 'CASCADED_TO'           // Cascade effect reached entity
+  | 'FORCED_LIQUIDATION'    // Entity forced to liquidate
+
+  // Amplification & Dampening
+  | 'AMPLIFIED_CRASH'       // Mechanism amplified crash
+  | 'DAMPENED_CRASH'        // Intervention dampened crash
+  | 'ACCELERATED'           // Factor accelerated cascade
+  | 'DELAYED'               // Factor delayed but didn't prevent
+
+  // Structural Relations
+  | 'COUNTERPARTY_OF'       // Counterparty relationship
+  | 'GUARANTEES'            // Entity guarantees another's obligations
+  | 'COLLATERALIZED_BY'     // Position collateralized by asset
+  | 'FUNDED_BY'             // Entity funded by source
+  | 'REHYPOTHECATED_TO'     // Collateral rehypothecated
+
+  // Intervention & Response
+  | 'BAILED_OUT'            // Entity received bailout
+  | 'INTERVENED_IN'         // Regulator intervened
+  | 'CIRCUIT_BREAKER'       // Trading halt triggered
+  | 'NATIONALIZED'          // Entity nationalized
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REGIME-AWARE RELATIONS [regime-rel-001]
+  // Channel-based propagation, regime tracking, narrative flow
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Regime & Channel
+  | 'IN_REGIME'             // Entity → Regime (current/historical state)
+  | 'REGIME_TRANSITION'     // Regime → Regime (state change)
+  | 'TRANSMITS_THROUGH'     // MacroEvent → Channel (propagation pathway)
+  | 'CHANNEL_AFFECTS'       // Channel → Entity (impact via channel)
+
+  // Narrative Propagation
+  | 'DRIVES_NARRATIVE'      // Event/Entity → Narrative (drives the narrative)
+  | 'NARRATIVE_INFLUENCES'  // Narrative → Entity (affects pricing/behavior)
+
+  // Causal Chain
+  | 'PART_OF_CHAIN'         // Entity → CausalChain (participates in chain)
+
+  // Portfolio
+  | 'PORTFOLIO_HOLDS'       // Portfolio → Entity (has exposure)
+  | 'PORTFOLIO_EXPOSED_TO'  // Portfolio → Channel (aggregate channel exposure)
+
+  // Scenario / Simulation
+  | 'SCENARIO_TARGETS'      // Scenario → Entity (shock target)
+  | 'SCENARIO_PRODUCES'     // Scenario → SimulatedOutcome
+  | 'SIMULATED_IMPACT'      // SimulatedOutcome → Entity (simulated impact)
+  | 'BASED_ON'              // SimulatedCrash → MarketCrash (real-world basis)
+
+  // Data Provenance
+  | 'EXTRACTED_FROM'        // RawData → DataSource
+  | 'CONTAINS'              // RawData → Entity (extracted from raw data)
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SELF-ORGANIZING AGENT ECOSYSTEM [ecosystem-rel-001]
+  // Gig lifecycle, token flows, coalition formation
+  // ═══════════════════════════════════════════════════════════════════════════
+  | 'PERFORMED'             // AutonomousAgent → Gig (agent completed the gig)
+  | 'HIRES'                 // Client → AutonomousAgent (engagement relationship)
+  | 'TOKEN_OF'              // Token → ecosystem entity (token belongs to ecosystem)
+  | 'PARTICIPATED_IN'       // AutonomousAgent → Coalition (agent joined coalition)
+  | 'BURN_EVENT'            // Burn → Token (tokens destroyed)
+  | 'COALITION_WITH'        // AutonomousAgent → AutonomousAgent (coalition membership)
+  | 'FUNDS';                // Payment → Gig | Client → AutonomousAgent (funding flow)
 
 export type Regime = 'normal' | 'stressed' | 'pre_tipping' | 'post_event';
 
@@ -213,6 +368,19 @@ export interface GraphStats {
   total_edges: number;
   nodes_by_type: Record<string, number>;
   last_updated: string;
+}
+
+// ─── PROVENANCE ENVELOPE [ecosystem-prov-001] ────────────────────────────────
+// Tracks the origin, cost, and agent attribution for every graph mutation.
+// Attached to GraphEdge.properties or GraphNode.properties as `provenance`.
+
+export interface ProvenanceEnvelope {
+  tool_name: string;        // MCP tool / n8n node that produced the data
+  timestamp: string;        // ISO-8601 UTC
+  source_url?: string;      // Original data source URL
+  cost?: number;            // Token cost for the operation (in smallest unit)
+  agent_id: string;         // AutonomousAgent ULEM ID that performed the action
+  tx_hash?: string;         // On-chain transaction hash (if token transfer)
 }
 
 export interface Claim {
@@ -1280,6 +1448,16 @@ export class KnowledgeGraph {
     return this.ready && this.db.isConnectionReady() && await this.db.isHealthy();
   }
 
+  /**
+   * Execute a raw Cypher query against forage_v1.
+   * Used by hybrid retrieval and migration utilities.
+   * [ecosystem-query-001]
+   */
+  async rawCypherQuery(cypher: string, params: Record<string, any> = {}): Promise<any[]> {
+    if (!this.ready) throw new Error('Graph not initialized');
+    return this.db.graphQuery(cypher, params);
+  }
+
   // Called after every tool response - now with proper error handling
   async ingest(toolName: string, result: any): Promise<void> {
     if (!this.ready) {
@@ -2133,7 +2311,22 @@ function buildEdge(
 }
 
 function mergeNodeProperties(existing: GraphNode, incoming: GraphNode): GraphNode {
-  const mergedSources = [...new Set([...existing.sources, ...incoming.sources])];
+  // Defensive: ensure sources is always an array
+  let existingSources: string[] = [];
+  if (Array.isArray(existing.sources)) {
+    existingSources = existing.sources;
+  } else if (existing.sources) {
+    existingSources = [existing.sources];
+  }
+  
+  let incomingSources: string[] = [];
+  if (Array.isArray(incoming.sources)) {
+    incomingSources = incoming.sources;
+  } else if (incoming.sources) {
+    incomingSources = [incoming.sources];
+  }
+  
+  const mergedSources = [...new Set([...existingSources, ...incomingSources])];
   const mergedProps: Record<string, any> = { ...existing.properties };
   for (const [k, v] of Object.entries(incoming.properties)) {
     if (v !== null && v !== undefined && v !== '') {
@@ -2192,6 +2385,101 @@ function cleanProperties(props: Record<string, any>): Record<string, any> {
     if (v !== null && v !== undefined && v !== '') clean[k] = v;
   }
   return clean;
+}
+
+// ─── HYBRID RETRIEVAL SCORING [ecosystem-retrieval-001] ──────────────────────
+// R(node) = alpha * S(semantic) + (1 - alpha) * I(graph)
+// Combines cosine similarity (semantic) with graph-structural importance
+// (degree centrality as proxy for betweenness, which FalkorDB doesn't natively compute).
+
+export interface HybridRetrievalOptions {
+  /** Blending factor: 0 = pure graph, 1 = pure semantic. Default 0.6. */
+  alpha?: number;
+  /** Maximum results to return */
+  limit?: number;
+  /** Filter by entity type(s) */
+  types?: EntityType[];
+  /** Pre-computed semantic scores keyed by node id */
+  semanticScores?: Map<string, number>;
+}
+
+/**
+ * Build a Cypher query that scores nodes via hybrid retrieval:
+ *   R(node) = alpha * S(semantic) + (1 - alpha) * I(graph)
+ *
+ * `S(semantic)` comes from an external embedding similarity map.
+ * `I(graph)` is degree centrality normalised to [0,1].
+ *
+ * Returns { cypher, params } ready for GRAPH.QUERY.
+ */
+export function buildHybridRetrievalQuery(
+  opts: HybridRetrievalOptions = {}
+): { cypher: string; params: Record<string, any> } {
+  const alpha = opts.alpha ?? 0.6;
+  const limit = opts.limit ?? 20;
+  const types = opts.types ?? [];
+
+  // Type filter clause
+  const typeFilter = types.length > 0
+    ? `WHERE n.type IN [${types.map(t => `'${t}'`).join(', ')}]`
+    : '';
+
+  // Degree centrality as graph importance proxy.
+  // FalkorDB supports SIZE(()) pattern for counting relationships.
+  const cypher = [
+    `MATCH (n:Entity)`,
+    typeFilter,
+    // Compute raw degree (in + out)
+    `OPTIONAL MATCH (n)-[r]-()`,
+    `WITH n, COUNT(r) AS degree`,
+    // Get max degree for normalisation
+    `WITH COLLECT({ node: n, degree: degree }) AS nodes,`,
+    `     MAX(degree) AS maxDegree`,
+    `UNWIND nodes AS item`,
+    `WITH item.node AS n,`,
+    `     item.degree AS degree,`,
+    `     CASE WHEN maxDegree > 0`,
+    `       THEN toFloat(item.degree) / toFloat(maxDegree)`,
+    `       ELSE 0.0`,
+    `     END AS graphImportance`,
+    // semantic_score is injected per-node via the semanticScores map at runtime;
+    // the Cypher uses a COALESCE fallback of 0.0 for nodes not in the map.
+    `WITH n, graphImportance,`,
+    `     COALESCE(n.semantic_score, 0.0) AS semanticScore,`,
+    `     ${alpha} AS alpha`,
+    `WITH n, graphImportance, semanticScore,`,
+    `     (alpha * semanticScore + (1.0 - alpha) * graphImportance) AS hybridScore`,
+    `RETURN n.id AS id, n.name AS name, n.type AS type,`,
+    `       semanticScore, graphImportance, hybridScore`,
+    `ORDER BY hybridScore DESC`,
+    `LIMIT $limit`,
+  ].join('\n');
+
+  return { cypher, params: { limit } };
+}
+
+/**
+ * Apply semantic scores to nodes in-graph before running hybrid retrieval.
+ * Sets a transient `semantic_score` property on matched Entity nodes.
+ *
+ * Usage:
+ *   const graph = knowledgeGraph;
+ *   await injectSemanticScores(graph, scores);
+ *   const { cypher, params } = buildHybridRetrievalQuery({ alpha: 0.6, limit: 10 });
+ *   // Execute cypher via graph.graphQuery(...)
+ */
+export async function injectSemanticScores(
+  graph: KnowledgeGraph,
+  scores: Map<string, number>
+): Promise<void> {
+  for (const [id, score] of scores) {
+    const cypher = `MATCH (n:Entity { id: '${id}' }) SET n.semantic_score = ${score}`;
+    try {
+      await graph.rawCypherQuery(cypher);
+    } catch {
+      // Best-effort: skip nodes that don't exist
+    }
+  }
 }
 
 export const knowledgeGraph = new KnowledgeGraph();
