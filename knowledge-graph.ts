@@ -873,9 +873,13 @@ class KnowledgeStore {
     const params: any = { name: nameLower };
     if (type) params.type = type;
 
+    console.log('[GRAPH] findNodesByName query:', query, 'params:', JSON.stringify(params));
     const rows = await this.graphQuery(query, params);
-    console.log('[GRAPH] findNodesByName rows:', JSON.stringify(rows).substring(0, 500));
-    return rows.map(r => this.rowToNode(r[0])).filter(Boolean) as GraphNode[];
+    console.log('[GRAPH] findNodesByName raw rows count:', rows.length, 'first:', JSON.stringify(rows[0]).substring(0, 300));
+    
+    const result = rows.map(r => this.rowToNode(r[0])).filter(Boolean) as GraphNode[];
+    console.log('[GRAPH] findNodesByName result count:', result.length);
+    return result;
   }
 
   async getOutboundEdges(nodeId: string, relation?: string): Promise<GraphEdge[]> {
@@ -1147,10 +1151,21 @@ class KnowledgeStore {
 
   private rowToNode(raw: any): GraphNode | null {
     if (!raw) return null;
-    const props = raw.properties || raw;
+    
+    // Handle both FalkorDB node format and simple map format
+    let props: any;
+    if (raw._internal_id !== undefined) {
+      // FalkorDB node: [internalId, [labels], [[key, type, value], ...]]
+      props = raw;
+    } else if (raw.properties) {
+      props = raw.properties;
+    } else {
+      props = raw;
+    }
+    
     // If no valid name, skip this node
     if (!props || !props.name) {
-      console.log('[GRAPH] Skipping node with no name:', props);
+      console.log('[GRAPH] Skipping node with no name, raw:', JSON.stringify(raw).substring(0, 200));
       return null;
     }
     try {
@@ -1175,7 +1190,7 @@ class KnowledgeStore {
         last_seen: props.last_seen || new Date().toISOString(),
       };
     } catch (e) {
-      console.log('[GRAPH] rowToNode error:', e);
+      console.log('[GRAPH] rowToNode error:', e, 'raw:', JSON.stringify(raw).substring(0, 200));
       return null;
     }
   }
