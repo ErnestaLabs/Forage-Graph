@@ -1147,6 +1147,11 @@ class KnowledgeStore {
   private rowToNode(raw: any): GraphNode | null {
     if (!raw) return null;
     const props = raw.properties || raw;
+    // If no valid name, skip this node
+    if (!props || !props.name) {
+      console.log('[GRAPH] Skipping node with no name:', props);
+      return null;
+    }
     try {
       // FIX: Handle non-array sources from DB - sources could be string or missing
       const sourcesRaw = this.parseJsonField(props.sources);
@@ -1161,14 +1166,15 @@ class KnowledgeStore {
         id: props.id,
         type: props.type,
         name: props.name,
-        properties: this.parseJsonField(props.properties),
+        properties: this.parseJsonField(props.properties) || {},
         sources: sources,
         confidence: parseFloat(props.confidence) || 0.75,
         call_count: parseInt(props.call_count) || 1,
         first_seen: props.first_seen || new Date().toISOString(),
         last_seen: props.last_seen || new Date().toISOString(),
       };
-    } catch {
+    } catch (e) {
+      console.log('[GRAPH] rowToNode error:', e);
       return null;
     }
   }
@@ -1196,9 +1202,9 @@ class KnowledgeStore {
   }
 
   private parseJsonField(val: any): any {
-    if (!val) return {};
+    if (val === null || val === undefined) return null;
     if (typeof val === 'object') return val;
-    try { return JSON.parse(val); } catch { return {}; }
+    try { return JSON.parse(val); } catch { return null; }
   }
 
   async isHealthy(): Promise<boolean> {
