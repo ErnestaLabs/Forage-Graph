@@ -1630,35 +1630,16 @@ export class KnowledgeGraph {
         // Handle relationship alias
         const relation = (c.relation || c.relationship || 'related_to') as RelationType;
 
-        // Try to find existing entities first
-        let fromNode: GraphNode | null = null;
-        let toNode: GraphNode | null = null;
+        // Build nodes - MERGE in setNode will handle deduplication
+        const fromType: EntityType = c.from_type || 'LegalEntity';
+        const toType: EntityType = c.to_type || 'LegalEntity';
 
-        // Look up "from" entity
-        const fromEntities = await this.findEntity(c.from_name);
-        if (fromEntities.length > 0 && fromEntities[0].id) {
-          fromNode = fromEntities[0];
-          console.log(`[CONN] Found existing from: ${c.from_name} -> id=${fromNode.id}`);
-        } else {
-          // Create new entity if not found or has no ID
-          const fromType: EntityType = c.from_type || 'LegalEntity';
-          fromNode = buildNode(fromType, c.from_name, {}, c.source || 'direct_inject');
-          await this.db.setNode({ ...fromNode, first_seen: now, last_seen: now });
-          console.log(`[CONN] Created new from: ${c.from_name} -> id=${fromNode.id}`);
-        }
+        const fromNode = buildNode(fromType, c.from_name, {}, c.source || 'direct_inject');
+        const toNode = buildNode(toType, c.to_name, {}, c.source || 'direct_inject');
 
-        // Look up "to" entity
-        const toEntities = await this.findEntity(c.to_name);
-        if (toEntities.length > 0 && toEntities[0].id) {
-          toNode = toEntities[0];
-          console.log(`[CONN] Found existing to: ${c.to_name} -> id=${toNode.id}`);
-        } else {
-          // Create new entity if not found or has no ID
-          const toType: EntityType = c.to_type || 'LegalEntity';
-          toNode = buildNode(toType, c.to_name, {}, c.source || 'direct_inject');
-          await this.db.setNode({ ...toNode, first_seen: now, last_seen: now });
-          console.log(`[CONN] Created new to: ${c.to_name} -> id=${toNode.id}`);
-        }
+        // Create/merge nodes (MERGE handles existing)
+        await this.db.setNode({ ...fromNode, first_seen: now, last_seen: now });
+        await this.db.setNode({ ...toNode, first_seen: now, last_seen: now });
 
         const edge = buildEdge(fromNode, toNode, relation, c.source || 'direct_inject', c.confidence || 0.75);
         if (c.properties) edge.properties = { ...edge.properties, ...c.properties };
