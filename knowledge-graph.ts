@@ -874,6 +874,7 @@ class KnowledgeStore {
     if (type) params.type = type;
 
     const rows = await this.graphQuery(query, params);
+    console.log('[GRAPH] findNodesByName rows:', JSON.stringify(rows).substring(0, 500));
     return rows.map(r => this.rowToNode(r[0])).filter(Boolean) as GraphNode[];
   }
 
