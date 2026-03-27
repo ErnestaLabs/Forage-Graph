@@ -40,6 +40,31 @@ export type EntityType =
   | 'DerivativeInstrument' // FIBO: DerivativeInstrument (options, futures)
   | 'Asset'                // FIBO: Asset (any asset class)
   
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GEOGRAPHIC HIERARCHY [geo-001]
+  // Nation → Region → City → District → Village resolution
+  // ═══════════════════════════════════════════════════════════════════════════
+  | 'Nation'               // Country: Russia, USA, Brazil, etc.
+  | 'Region'               // Sub-national: Tatarstan, California, Bavaria
+  | 'City'                 // Urban center: Kazan, San Francisco, Munich
+  | 'District'             // City sub-division: Vtorov, SoMa, Maxvorstadt
+  | 'Village'              // Rural settlement: smallest geographic unit
+  
+  // Geographic Attributes
+  | 'Culture'              // Cultural group: Tatar, Catalan, Yoruba
+  | 'Religion'            // Faith system: Islam, Christianity, Buddhism
+  | 'Language'            // Language/dialect: Tatar, Catalan, Hausa
+  
+  // Brand & Product [brand-001]
+  | 'Brand'                // Brand entity: Zara, Apple, Samsung
+  | 'Product'              // Product category: dress, smartphone,电动车
+  | 'ProductCategory'      // High-level category: fashion, electronics
+  
+  // Identity & Belief [identity-001]
+  | 'IdentityGroup'        // Social group with shared identity
+  | 'Belief'               // Specific belief or value
+  | 'Narrative'            // Shared story or discourse
+  
   // Geographic/Spatial
   | 'Location'             // FIBO: GeographicLocation
   | 'Jurisdiction'         // FIBO: Jurisdiction (legal jurisdiction)
@@ -47,7 +72,7 @@ export type EntityType =
   // Industry/Market
   | 'Industry'             // FIBO: IndustrySector
   | 'Market'               // FIBO: Market
-  | 'EconomicSector'       // FIBO: EconomicSector
+  | 'EconomicSector'      // FIBO: EconomicSector
   
   // Information/Knowledge
   | 'Technology'
@@ -303,6 +328,28 @@ export type RelationType =
   | 'BURN_EVENT'            // Burn → Token (tokens destroyed)
   | 'COALITION_WITH'        // AutonomousAgent → AutonomousAgent (coalition membership)
   | 'FUNDS';                // Payment → Gig | Client → AutonomousAgent (funding flow)
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CROSS-CULTURAL PERCEPTION EDGES [perception-001]
+  // How culture A perceives culture B, brands, products, narratives
+  // Properties: sentiment (-1..1), trust (-1..1), aspiration (-1..1), 
+  //             hostility (-1..1), familiarity (0..1), velocity, reach
+  // ═══════════════════════════════════════════════════════════════════════════
+  | 'PERCEIVES'             // Person/Culture/Region perceives entity (brand, culture, product)
+  | 'PREFERS_OVER'          // Person prefers brand A over brand B
+  | 'IDENTIFIES_WITH'       // Person identifies with culture/identity group
+  | 'ADOPTS_FROM'           // City/Region adopts cultural element from another
+  | 'CLASS_PURCHASES'       // Person purchases based on class bracket
+  | 'TRUSTS_IN'             // Person/Region trusts institution/brand
+  | 'NARRATIVE_FLOWS'       // Narrative flows across platforms/regions
+  | 'BUYS'                  // Person → Product (purchase behavior)
+  | 'ASPIRES_TO'            // Person aspires to cultural element
+  | 'DISTRUSTS'             // Person distrusts entity (hostility edge)
+  
+  // Geographic Hierarchy Edges
+  | 'LOCATED_IN'            // Region → Nation, City → Region, etc.
+  | 'BELONGS_TO'            // Person belongs to IdentityGroup (strength: 0-1)
+  | 'SHARES_MYTH'           // IdentityGroup shares narrative/myth (salience: 0-1)
 
 export type Regime = 'normal' | 'stressed' | 'pre_tipping' | 'post_event';
 
@@ -1230,6 +1277,233 @@ class KnowledgeStore {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PERCEPTION EDGE OPERATIONS [perception-002]
+  // Idempotent writes for cross-cultural perception edges
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Upsert a perception edge — idempotent write.
+   * If edge exists, merges confidence and properties (averages for numeric).
+   * Properties: sentiment, trust, aspiration, hostility, familiarity (all -1..1 or 0..1)
+   */
+  async upsertPerceptionEdge(
+    fromName: string,
+    fromType: EntityType,
+    toName: string,
+    toType: EntityType,
+    relation: 'PERCEIVES' | 'PREFERS_OVER' | 'IDENTIFIES_WITH' | 'ADOPTS_FROM' | 
+              'CLASS_PURCHASES' | 'TRUSTS_IN' | 'NARRATIVE_FLOWS' | 'BUYS' | 
+              'ASPIRES_TO' | 'DISTRUSTS' | 'LOCATED_IN' | 'BELONGS_TO' | 'SHARES_MYTH',
+    attrs: {
+      sentiment?: number;
+      trust?: number;
+      aspiration?: number;
+      hostility?: number;
+      familiarity?: number;
+      velocity?: number;
+      reach?: number;
+      volume?: number;
+      frequency?: number;
+      channel?: string;
+      intensity?: number;
+      strength?: number;
+      salience?: number;
+      reason?: string;
+    },
+    source: string,
+    confidence: number = 0.5
+  ): Promise<void> {
+    const fromId = generateULEMIdentity(fromName, fromType).ulem_id;
+    const toId = generateULEMIdentity(toName, toType).ulem_id;
+    const edgeId = `${fromId}:${relation}:${toId}`;
+    const now = new Date().toISOString();
+
+    const props: Record<string, any> = {
+      relation,
+      source,
+      confidence,
+      call_count: 1,
+      first_seen: now,
+      last_seen: now,
+      ...attrs
+    };
+
+    // Idempotent MERGE — updates if exists, creates if not
+    await this.graphQuery(
+      `MERGE (a:Entity {id: $from_id})
+       ON CREATE SET a.name = $from_name, a.type = $from_type, a.name_lower = toLower($from_name)
+       MERGE (b:Entity {id: $to_id})
+       ON CREATE SET b.name = $to_name, b.type = $to_type, b.name_lower = toLower($to_name)
+       MERGE (a)-[e:RELATES {id: $edge_id}]->(b)
+       SET e.relation = $relation,
+           e.confidence = CASE WHEN e.confidence IS NOT NULL THEN (e.confidence + $confidence) / 2 ELSE $confidence END,
+           e.call_count = coalesce(e.call_count, 0) + 1,
+           e.last_seen = $now
+       SET e += $props`,
+      {
+        from_id: fromId,
+        from_name: fromName,
+        from_type: fromType,
+        to_id: toId,
+        to_name: toName,
+        to_type: toType,
+        edge_id: edgeId,
+        relation,
+        confidence,
+        now,
+        props
+      }
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SIMULATION SEED EXPORT [sim-seed-001]
+  // Export subgraph for MiroFish OASIS seeding
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Export subgraph as MiroFish-compatible JSON.
+   * Includes nodes with properties and edges with weights.
+   */
+  async exportSimSeed(subgraphQuery: string): Promise<{
+    nodes: Array<{ id: string; type: string; name: string; properties: Record<string, any> }>;
+    edges: Array<{ from: string; to: string; relation: string; weight: number }>;
+  }> {
+    const rows = await this.graphQuery(subgraphQuery, {});
+    
+    const nodesMap = new Map<string, any>();
+    const edges: Array<{ from: string; to: string; relation: string; weight: number }> = [];
+
+    for (const row of rows) {
+      // Handle various row formats
+      const n = row.n || row[0];
+      if (n && n.id && n.name) {
+        nodesMap.set(n.id, {
+          id: n.id,
+          type: n.type || 'Entity',
+          name: n.name,
+          properties: n.properties || {}
+        });
+      }
+      
+      // Handle edges if present
+      const r = row.r || row[1];
+      const m = row.m || row[2];
+      if (r && m && r.from_id && m.id) {
+        edges.push({
+          from: r.from_id,
+          to: m.id,
+          relation: r.relation || 'related_to',
+          weight: r.confidence || 0.5
+        });
+      }
+    }
+
+    return {
+      nodes: Array.from(nodesMap.values()),
+      edges
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SIMULATION RESULTS IMPORT [sim-results-001]
+  // Import MiroFish prediction reports back to graph
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Import MiroFish simulation report into graph.
+   * Writes SimAgent, SimEpisode, and prediction edges.
+   */
+  async importSimResults(report: {
+    sim_id: string;
+    agents?: Array<{ id: string; behavior: string; decisions: string[] }>;
+    predictions?: Array<{
+      entity: string;
+      predicted_value: number;
+      confidence: number;
+      horizon: string;
+    }>;
+    narratives?: Array<{
+      topic: string;
+      sentiment: number;
+      velocity: number;
+      reach: number;
+    }>;
+  }): Promise<void> {
+    const now = new Date().toISOString();
+    const simId = `sim_${report.sim_id}`;
+
+    // Create simulation node
+    await this.graphQuery(
+      `MERGE (s:Entity {id: $sim_id})
+       SET s.type = 'Simulation',
+           s.name = 'Simulation ${$sim_id}',
+           s.properties = $properties,
+           s.first_seen = $now,
+           s.last_seen = $now`,
+      {
+        sim_id: simId,
+        now,
+        properties: JSON.stringify({
+          sim_id: report.sim_id,
+          agents_count: report.agents?.length || 0,
+          predictions_count: report.predictions?.length || 0
+        })
+      }
+    );
+
+    // Write prediction edges if present
+    if (report.predictions) {
+      for (const pred of report.predictions) {
+        const entityId = generateULEMIdentity(pred.entity, 'Entity').ulem_id;
+        await this.graphQuery(
+          `MERGE (e:Entity {id: $entity_id})
+           MERGE (s:Entity {id: $sim_id})
+           MERGE (e)-[r:SIMULATED_IMPACT]->(s)
+           SET r.predicted_value = $predicted_value,
+               r.confidence = $confidence,
+               r.horizon = $horizon,
+               r.last_seen = $now`,
+          {
+            entity_id: entityId,
+            sim_id: simId,
+            predicted_value: pred.predicted_value,
+            confidence: pred.confidence,
+            horizon: pred.horizon,
+            now
+          }
+        );
+      }
+    }
+
+    // Write narrative edges if present
+    if (report.narratives) {
+      for (const narr of report.narratives) {
+        const topicId = generateULEMIdentity(narr.topic, 'Narrative').ulem_id;
+        await this.graphQuery(
+          `MERGE (n:Entity {id: $topic_id})
+           SET n.type = 'Narrative', n.name = $topic, n.name_lower = toLower($topic)
+           MERGE (s:Entity {id: $sim_id})
+           MERGE (s)-[r:NARRATIVE_FLOWS]->(n)
+           SET r.sentiment = $sentiment,
+               r.velocity = $velocity,
+               r.reach = $reach,
+               r.last_seen = $now`,
+          {
+            topic_id: topicId,
+            topic: narr.topic,
+            sim_id: simId,
+            sentiment: narr.sentiment,
+            velocity: narr.velocity,
+            reach: narr.reach,
+            now
+          }
+        );
+      }
     }
   }
 }
