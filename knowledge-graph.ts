@@ -327,7 +327,7 @@ export type RelationType =
   | 'PARTICIPATED_IN'       // AutonomousAgent → Coalition (agent joined coalition)
   | 'BURN_EVENT'            // Burn → Token (tokens destroyed)
   | 'COALITION_WITH'        // AutonomousAgent → AutonomousAgent (coalition membership)
-  | 'FUNDS';                // Payment → Gig | Client → AutonomousAgent (funding flow)
+  | 'FUNDS'                 // Payment → Gig | Client → AutonomousAgent (funding flow)
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CROSS-CULTURAL PERCEPTION EDGES [perception-001]
@@ -349,7 +349,7 @@ export type RelationType =
   // Geographic Hierarchy Edges
   | 'LOCATED_IN'            // Region → Nation, City → Region, etc.
   | 'BELONGS_TO'            // Person belongs to IdentityGroup (strength: 0-1)
-  | 'SHARES_MYTH'           // IdentityGroup shares narrative/myth (salience: 0-1)
+  | 'SHARES_MYTH';          // IdentityGroup shares narrative/myth (salience: 0-1)
 
 export type Regime = 'normal' | 'stressed' | 'pre_tipping' | 'post_event';
 
