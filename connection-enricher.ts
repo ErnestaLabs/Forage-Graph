@@ -130,7 +130,7 @@ export class ConnectionEnricher {
       MATCH (e:Entity)
       WHERE e.connection_count IS NULL OR e.connection_count < 5
       RETURN e
-      ORDER BY e.last_enriched ASC NULLS FIRST, e.created_at ASC
+      ORDER BY e.last_enriched ASC, e.created_at ASC
       LIMIT $limit
     `, { limit }) as Entity[];
   }
