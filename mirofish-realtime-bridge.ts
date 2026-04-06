@@ -40,8 +40,8 @@ interface MiroFishSimulationResult {
     horizon: string;
   }>;
   causal_paths: Array<{
-    from: string;
-    to: string;
+    from_id: string;
+    to_id: string;
     path: string[];
     weight: number;
   }>;
@@ -297,7 +297,7 @@ export class RealTimeMiroFishBridge {
    */
   private async extractSubgraph(centerId: string, depth: number): Promise<any> {
     // Query the graph for N-hop neighborhood
-    const result = await this.graph.graphQuery(`
+    const result = await this.graph.rawCypherQuery(`
       MATCH path = (center:Entity {id: $centerId})-[*1..${depth}]-(neighbor:Entity)
       WITH center, neighbor, relationships(path) as rels
       RETURN center, collect(DISTINCT neighbor) as neighbors, collect(DISTINCT rels) as edges
@@ -312,7 +312,7 @@ export class RealTimeMiroFishBridge {
   private async extractMergedSubgraph(jobs: MiroFishExportJob[]): Promise<any> {
     const entityIds = jobs.map(j => j.entity_id);
     
-    const result = await this.graph.graphQuery(`
+    const result = await this.graph.rawCypherQuery(`
       UNWIND $entityIds as id
       MATCH (center:Entity {id: id})
       OPTIONAL MATCH path = (center)-[*1..2]-(neighbor:Entity)
@@ -454,7 +454,7 @@ export class RealTimeMiroFishBridge {
    * Create SimEpisode node
    */
   private async createSimEpisode(result: MiroFishSimulationResult): Promise<void> {
-    await this.graph.graphQuery(`
+    await this.graph.rawCypherQuery(`
       MERGE (s:SimEpisode {id: $sim_id})
       SET s.entity_id = $entity_id,
           s.predictions_count = $predictions_count,
@@ -473,7 +473,7 @@ export class RealTimeMiroFishBridge {
    */
   private async importPredictions(result: MiroFishSimulationResult): Promise<void> {
     for (const pred of result.predictions) {
-      await this.graph.graphQuery(`
+      await this.graph.rawCypherQuery(`
         MATCH (e:Entity {name: $entity})
         MATCH (s:SimEpisode {id: $sim_id})
         MERGE (e)-[sig:SIGNAL {type: 'sim_prediction', horizon: $horizon}]->(s)
@@ -499,8 +499,10 @@ export class RealTimeMiroFishBridge {
     for (const path of result.causal_paths) {
       // Create direct causal link
       connections.push({
-        from: path.from,
-        to: path.to,
+        from_id: path.from_id,
+        to_id: path.to_id,
+        from_name: path.from_id,
+        to_name: path.to_id,
         relation: 'causes',
         weight: path.weight,
         confidence: Math.min(path.weight * 1.5, 0.95),
@@ -514,8 +516,10 @@ export class RealTimeMiroFishBridge {
       // Create intermediate connections for full path
       for (let i = 0; i < path.path.length - 1; i++) {
         connections.push({
-          from: path.path[i],
-          to: path.path[i + 1],
+          from_id: path.path[i],
+          to_id: path.path[i + 1],
+          from_name: path.path[i],
+          to_name: path.path[i + 1],
           relation: 'enables',
           weight: path.weight * 0.8,
           confidence: Math.min(path.weight * 1.2, 0.9),
@@ -536,10 +540,10 @@ export class RealTimeMiroFishBridge {
    */
   private async createCausalRelationships(connections: Array<Partial<Relationship>>): Promise<void> {
     // Batch create using UNWIND
-    await this.graph.graphQuery(`
+    await this.graph.rawCypherQuery(`
       UNWIND $connections as conn
-      MATCH (a:Entity {id: conn.from})
-      MATCH (b:Entity {id: conn.to})
+      MATCH (a:Entity {id: conn.from_id})
+      MATCH (b:Entity {id: conn.to_id})
       MERGE (a)-[r:RELATES {type: conn.relation}]->(b)
       SET r.weight = conn.weight,
           r.confidence = conn.confidence,
@@ -553,7 +557,7 @@ export class RealTimeMiroFishBridge {
    */
   private async updateRegimes(result: MiroFishSimulationResult): Promise<void> {
     for (const transition of result.regime_transitions) {
-      await this.graph.graphQuery(`
+      await this.graph.rawCypherQuery(`
         MATCH (e:Entity {name: $entity})
         SET e.regime = $to_regime,
             e.predicted_regime = $to_regime,
@@ -594,8 +598,8 @@ export class RealTimeMiroFishBridge {
       priority += 0.3;
     }
 
-    // Higher priority if entity has many connections
-    if (entity.connection_count && entity.connection_count > 5) {
+    // Higher priority if entity has regime set
+    if (entity.regime && entity.regime !== 'normal') {
       priority += 0.2;
     }
 

@@ -24,8 +24,10 @@ interface EnrichmentRule {
 }
 
 interface LinkPrediction {
-  from: string;
-  to: string;
+  from_id: string;
+  to_id: string;
+
+
   relation: RelationType;
   confidence: number;
   source: string;
@@ -126,7 +128,7 @@ export class ConnectionEnricher {
    * Get entities with sparse connections
    */
   private async getSparseEntities(limit: number): Promise<Entity[]> {
-    return await this.graph.graphQuery(`
+    return await this.graph.rawCypherQuery(`
       MATCH (e:Entity)
       WHERE e.connection_count IS NULL OR e.connection_count < 5
       RETURN e
@@ -148,22 +150,22 @@ export class ConnectionEnricher {
           const connections: Partial<Relationship>[] = [];
           
           // Get employer
-          const employer = await graph.graphQuery(`
+          const employer = await graph.rawCypherQuery(`
             MATCH (p:Entity {id: $personId})-[r:works_at]->(e:Entity)
             RETURN e
           `, { personId: entity.id });
 
           if (employer) {
             // Check for parent company
-            const parent = await graph.graphQuery(`
+            const parent = await graph.rawCypherQuery(`
               MATCH (e:Entity {id: $employerId})-[r:subsidiary_of]->(p:Entity)
               RETURN p
             `, { employerId: employer[0]?.id });
 
             if (parent && parent[0]) {
               connections.push({
-                from: entity.id,
-                to: parent[0].id,
+                from_id: entity.id,
+                to_id: parent[0].id,
                 relation: 'works_at' as RelationType,
                 confidence: 0.7,
                 properties: {
@@ -187,15 +189,15 @@ export class ConnectionEnricher {
           const connections: Partial<Relationship>[] = [];
           
           // Check if entity owns others
-          const owned = await graph.graphQuery(`
+          const owned = await graph.rawCypherQuery(`
             MATCH (owner:Entity {id: $id})-[r:owns]->(owned:Entity)
             RETURN owned
           `, { id: entity.id });
 
           for (const o of owned || []) {
             connections.push({
-              from: o.id,
-              to: entity.id,
+              from_id: o.id,
+              to_id: entity.id,
               relation: 'owned_by' as RelationType,
               confidence: 0.95, // High confidence for inverse
               properties: {
@@ -217,22 +219,22 @@ export class ConnectionEnricher {
         infer: async (entity, graph) => {
           const connections: Partial<Relationship>[] = [];
           
-          const competitors = await graph.graphQuery(`
+          const competitors = await graph.rawCypherQuery(`
             MATCH (e:Entity {id: $id})-[r:competitor_of]->(c:Entity)
             RETURN c
           `, { id: entity.id });
 
           for (const c of competitors || []) {
             // Check if reverse exists
-            const reverseExists = await graph.graphQuery(`
+            const reverseExists = await graph.rawCypherQuery(`
               MATCH (c:Entity {id: $cId})-[r:competitor_of]->(e:Entity {id: $eId})
               RETURN r
             `, { cId: c.id, eId: entity.id });
 
             if (!reverseExists || reverseExists.length === 0) {
               connections.push({
-                from: c.id,
-                to: entity.id,
+                from_id: c.id,
+                to_id: entity.id,
                 relation: 'competitor_of' as RelationType,
                 confidence: 0.95,
                 properties: {
@@ -256,14 +258,14 @@ export class ConnectionEnricher {
           
           if (entity.type === 'City') {
             // City → Region → Nation
-            const region = await graph.graphQuery(`
+            const region = await graph.rawCypherQuery(`
               MATCH (city:Entity {id: $id})-[r:located_in]->(region:Entity)
               WHERE region.type = 'Region'
               RETURN region
             `, { id: entity.id });
 
             if (region && region[0]) {
-              const nation = await graph.graphQuery(`
+              const nation = await graph.rawCypherQuery(`
                 MATCH (region:Entity {id: $regionId})-[r:located_in]->(nation:Entity)
                 WHERE nation.type = 'Nation'
                 RETURN nation
@@ -271,8 +273,8 @@ export class ConnectionEnricher {
 
               if (nation && nation[0]) {
                 connections.push({
-                  from: entity.id,
-                  to: nation[0].id,
+                  from_id: entity.id,
+                  to_id: nation[0].id,
                   relation: 'located_in' as RelationType,
                   confidence: 0.85,
                   properties: {
@@ -303,8 +305,8 @@ export class ConnectionEnricher {
         if (rule.match(entity)) {
           const inferred = await rule.infer(entity, this.graph);
           connections.push(...inferred.map(i => ({
-            from: i.from!,
-            to: i.to!,
+            from_id: i.from_id!,
+            to_id: i.to_id!,
             relation: i.relation!,
             confidence: i.confidence || 0.7,
             source: rule.name,
@@ -327,7 +329,7 @@ export class ConnectionEnricher {
 
     try {
       // Get neighbors of the entity
-      const neighbors = await this.graph.graphQuery(`
+      const neighbors = await this.graph.rawCypherQuery(`
         MATCH (e:Entity {id: $id})-[:RELATES]-(neighbor:Entity)
         RETURN neighbor
       `, { id: entity.id }) as Entity[];
@@ -343,7 +345,7 @@ export class ConnectionEnricher {
           const neighborB = neighbors[j];
 
           // Check if already connected
-          const existingConnection = await this.graph.graphQuery(`
+          const existingConnection = await this.graph.rawCypherQuery(`
             MATCH (a:Entity {id: $aId})-[:RELATES]-(b:Entity {id: $bId})
             RETURN count(*) as count
           `, { aId: neighborA.id, bId: neighborB.id });
@@ -357,8 +359,8 @@ export class ConnectionEnricher {
 
           if (score > 0.3) { // Threshold for prediction
             connections.push({
-              from: neighborA.id!,
-              to: neighborB.id!,
+              from_id: neighborA.id!,
+              to_id: neighborB.id!,
               relation: 'similar_to' as RelationType,
               confidence: Math.min(score * 1.5, 0.9),
               source: 'adamic_adar',
@@ -387,7 +389,7 @@ export class ConnectionEnricher {
    */
   private async calculateAdamicAdar(nodeA: string, nodeB: string): Promise<number> {
     try {
-      const result = await this.graph.graphQuery(`
+      const result = await this.graph.rawCypherQuery(`
         MATCH (a:Entity {id: $aId})-[:RELATES]-(common:Entity)-[:RELATES]-(b:Entity {id: $bId})
         WITH common, count {.*} as degree
         RETURN sum(1.0 / log(degree + 1)) as score
@@ -410,7 +412,7 @@ export class ConnectionEnricher {
 
     for (const neighbor of neighbors) {
       // Get neighbors of neighbor (excluding the original entity)
-      const secondDegree = await this.graph.graphQuery(`
+      const secondDegree = await this.graph.rawCypherQuery(`
         MATCH (n:Entity {id: $nId})-[:RELATES]-(friend:Entity)
         WHERE friend.id <> $entityId
         RETURN friend
@@ -419,7 +421,7 @@ export class ConnectionEnricher {
 
       for (const friend of secondDegree || []) {
         // Calculate common neighbor count
-        const commonCount = await this.graph.graphQuery(`
+        const commonCount = await this.graph.rawCypherQuery(`
           MATCH (e:Entity {id: $eId})-[:RELATES]-(common:Entity)-[:RELATES]-(f:Entity {id: $fId})
           RETURN count(common) as common_neighbors
         `, { eId: entityId, fId: friend.id });
@@ -428,8 +430,8 @@ export class ConnectionEnricher {
 
         if (commonNeighbors >= 2) {
           connections.push({
-            from: entityId,
-            to: friend.id,
+            from_id: entityId,
+            to_id: friend.id,
             relation: 'related_to' as RelationType,
             confidence: Math.min(0.5 + (commonNeighbors * 0.1), 0.8),
             source: 'second_degree',
@@ -450,7 +452,7 @@ export class ConnectionEnricher {
 
     try {
       // Find entities that appear in same sources (news, reports, etc.)
-      const cooccurring = await this.graph.graphQuery(`
+      const cooccurring = await this.graph.rawCypherQuery(`
         MATCH (a:Entity {id: $id})-[m:MENTIONED_IN]->(s:Source)
         MATCH (b:Entity)-[m2:MENTIONED_IN]->(s)
         WHERE a <> b
@@ -469,8 +471,8 @@ export class ConnectionEnricher {
         const frequencyBoost = Math.min(row.cooccurrence * 0.05, 0.3);
         
         connections.push({
-          from: entity.id!,
-          to: row.b.id,
+          from_id: entity.id!,
+          to_id: row.b.id,
           relation: 'cooccurs_with' as RelationType,
           confidence: Math.min(0.6 + frequencyBoost + recencyBoost, 0.95),
           source: 'temporal_cooccurrence',
@@ -479,7 +481,7 @@ export class ConnectionEnricher {
       }
 
       // Also check for entities appearing in same simulations
-      const simCooccurring = await this.graph.graphQuery(`
+      const simCooccurring = await this.graph.rawCypherQuery(`
         MATCH (a:Entity {id: $id})-[:SIMULATES|PARTICIPATES_IN]->(sim:SimEpisode)
         MATCH (b:Entity)-[:SIMULATES|PARTICIPATES_IN]->(sim)
         WHERE a <> b
@@ -492,8 +494,8 @@ export class ConnectionEnricher {
 
       for (const row of simCooccurring || []) {
         connections.push({
-          from: entity.id!,
-          to: row.b.id,
+          from_id: entity.id!,
+          to_id: row.b.id,
           relation: 'simulated_with' as RelationType,
           confidence: Math.min(0.7 + (row.sim_count * 0.1), 0.95),
           source: 'simulation_cooccurrence',
@@ -529,7 +531,7 @@ export class ConnectionEnricher {
     const unique: LinkPrediction[] = [];
 
     for (const conn of connections) {
-      const key = `${conn.from}:${conn.to}:${conn.relation}`;
+      const key = `${conn.from_id}:${conn.to_id}:${conn.relation}`;
       
       if (!seen.has(key)) {
         seen.add(key);
@@ -537,7 +539,7 @@ export class ConnectionEnricher {
       } else {
         // If duplicate, keep the one with higher confidence
         const existing = unique.find(u => 
-          u.from === conn.from && u.to === conn.to && u.relation === conn.relation
+          u.from_id === conn.from_id && u.to_id === conn.to_id && u.relation === conn.relation
         );
         if (existing && conn.confidence > existing.confidence) {
           existing.confidence = conn.confidence;
@@ -557,8 +559,8 @@ export class ConnectionEnricher {
 
     // Prepare batch for Cypher
     const batch = connections.map(c => ({
-      from_id: c.from,
-      to_id: c.to,
+      from_id: c.from_id,
+      to_id: c.to_id,
       relation: c.relation,
       confidence: c.confidence,
       weight: c.weight || 0.5,
@@ -567,7 +569,7 @@ export class ConnectionEnricher {
       created_at: new Date().toISOString()
     }));
 
-    await this.graph.graphQuery(`
+    await this.graph.rawCypherQuery(`
       UNWIND $batch as row
       MERGE (a:Entity {id: row.from_id})
       MERGE (b:Entity {id: row.to_id})
@@ -587,7 +589,7 @@ export class ConnectionEnricher {
     entityId: string, 
     newConnections: number
   ): Promise<void> {
-    await this.graph.graphQuery(`
+    await this.graph.rawCypherQuery(`
       MATCH (e:Entity {id: $id})
       SET e.last_enriched = datetime(),
           e.connection_count = coalesce(e.connection_count, 0) + $newConnections,
