@@ -136,7 +136,91 @@ export type EntityType =
   | 'GeopoliticalShock'    // War, sanctions, political crisis
   | 'PandemicShock'        // Health crisis impact
   | 'TechFailure'          // Infrastructure/system failure
-  | 'FraudRevelation';     // Major fraud uncovered (e.g., Madoff)
+  | 'FraudRevelation'      // Major fraud uncovered (e.g., Madoff)
+
+  // ─── Trading / Prediction Markets [trading-001] ─────────────────────────────
+  | 'PredictionMarket'     // Binary prediction market (Polymarket, Kalshi)
+  | 'OddsSnapshot'         // Point-in-time price snapshot on a prediction market
+  | 'Trade'                // Executed trade record (on-chain or off-chain)
+  | 'Source'               // Intelligence source (wallet, fund, analyst)
+  | 'Signal'               // Actionable trading signal (cross-venue, model output)
+  | 'Revelation'           // Oracle revelation: synthesised insight from graph
+  | 'Regime'               // Market regime state (risk-on/off, vol regime)
+  | 'PriceSnapshot'        // Point-in-time asset price (equities, FX, crypto)
+  | 'Order'                // Limit/market order on an exchange
+  | 'Position'             // Open position (long/short) held by an actor
+  | 'Portfolio'            // Portfolio exposure tracking
+  | 'Execution'            // Trade execution record with fill details
+  | 'Venue'                // Trading venue / exchange (IG, Polymarket, Binance)
+  | 'Instrument'           // Tradeable instrument (epic, ticker, contract)
+  | 'SpreadBet'            // IG spread bet position
+  | 'CFD'                  // Contract for difference position
+  | 'PredictionOutcome'    // Resolved outcome of a prediction market
+  | 'Arbitrage'            // Detected arbitrage opportunity
+
+  // ─── Intelligence / News / Media [intel-001] ─────────────────────────────────
+  | 'Article'              // News article or blog post
+  | 'NewsSource'           // Publication / media outlet
+  | 'SocialPost'           // Social media post (Twitter/X, Reddit, LinkedIn)
+  | 'Rumour'               // Unverified market rumour
+  | 'EarningsReport'       // Corporate earnings announcement
+  | 'Transcript'           // Earnings call / conference transcript
+  | 'PressRelease'         // Official press release
+  | 'Lawsuit'              // Legal proceedings / litigation
+  | 'Patent'               // Intellectual property filing
+  | 'MacroEvent'           // Macro-level event (FOMC, election, GDP release)
+  | 'EconomicRelease'      // Official economic data release (CPI, NFP, etc.)
+  | 'CentralBankAction'    // Central bank rate decision / QE / QT
+  | 'SanctionEvent'        // Sanctions imposed or lifted
+  | 'ElectionEvent'        // Election or referendum
+  | 'ConflictEvent'        // Armed conflict, war, ceasefire
+  | 'NaturalDisaster'      // Natural disaster event
+  | 'ClimateEvent'         // Climate / ESG event
+  | 'IPO'                  // Initial public offering
+  | 'Merger'               // M&A: merger or acquisition
+  | 'Spinoff'              // Corporate spinoff / demerger
+  | 'Bankruptcy'           // Bankruptcy or insolvency filing
+
+  // ─── People & Organisations [org-001] ──────────────────────────────────────
+  | 'Executive'            // C-suite executive
+  | 'Politician'           // Elected or appointed official
+  | 'CentralBanker'        // Central bank official (Fed chair, ECB, etc.)
+  | 'Analyst'              // Sell-side / buy-side analyst
+  | 'Journalist'           // Financial journalist / reporter
+  | 'Regulator'            // Regulatory body or individual regulator
+  | 'Fund'                 // Investment fund (hedge fund, mutual fund, ETF)
+  | 'HedgeFund'            // Hedge fund entity
+  | 'PensionFund'          // Pension fund entity
+  | 'SovereignWealthFund'  // Sovereign wealth fund
+  | 'VentureCapital'       // VC firm
+  | 'PrivateEquity'        // PE firm
+  | 'IndexProvider'        // S&P, MSCI, FTSE Russell etc.
+  | 'Exchange'             // Stock / derivatives exchange
+  | 'ClearingHouse'        // Central counterparty clearing house
+  | 'Custodian'            // Asset custodian
+  | 'PrimeBroker'          // Prime brokerage entity
+  | 'CryptoWallet'         // Blockchain wallet address
+  | 'CryptoProtocol'       // DeFi protocol / smart contract system
+  | 'DAO'                  // Decentralised autonomous organisation
+
+  // ─── Science / Research [research-001] ─────────────────────────────────────
+  | 'ResearchPaper'        // Academic or industry research paper
+  | 'Dataset'              // Named dataset or data product
+  | 'Model'                // Quantitative model / ML model
+  | 'Concept'              // Abstract concept (inflation, liquidity, contagion)
+  | 'Metric'               // Quantitative metric (P/E ratio, Sharpe, VaR)
+
+  // ─── Infrastructure / Tech [infra-001] ──────────────────────────────────────
+  | 'API'                  // External API or data feed
+  | 'Database'             // Database or data warehouse
+  | 'Blockchain'           // Layer-1 or Layer-2 blockchain network
+  | 'SmartContract'        // Deployed smart contract
+  | 'Infrastructure'       // Cloud / physical infrastructure
+  | 'AIAgent'              // AI agent in the Forage org or external agent
+
+  // ─── Generic fallback ────────────────────────────────────────────────────────
+  | 'Entity'               // Unclassified entity (catch-all)
+  | 'Unknown';             // Type not yet determined
 
 export type RelationType =
   // FIBO Role Pattern Relationships [fibo-role-001]
@@ -282,7 +366,72 @@ export type RelationType =
 
   // Data Provenance
   | 'EXTRACTED_FROM'        // RawData → DataSource
-  | 'CONTAINS';             // RawData → Entity (extracted from raw data)
+  | 'CONTAINS'              // RawData → Entity (extracted from raw data)
+
+  // ─── Trading & Markets [trading-rel-001] ─────────────────────────────────────
+  | 'trades_on'             // Actor trades on Venue
+  | 'holds_position'        // Actor holds Position in Instrument
+  | 'executed'              // Actor executed Trade
+  | 'placed_order'          // Actor placed Order
+  | 'references'            // Signal references PredictionMarket/Instrument
+  | 'priced_at'             // Instrument priced at PriceSnapshot
+  | 'settled_as'            // PredictionMarket settled as PredictionOutcome
+  | 'arbitrage_between'     // Arbitrage opportunity between two venues/markets
+  | 'monitors'              // Source/Agent monitors Market/Signal
+  | 'copied_from'           // Position copied from a Source (copy-trading)
+  | 'diverges_from'         // Signal diverges from another signal/market
+  | 'confirmed_by'          // Signal confirmed by additional evidence
+
+  // ─── News & Intelligence [intel-rel-001] ─────────────────────────────────────
+  | 'published_by'          // Article published by NewsSource
+  | 'authored_by'           // Article authored by Person/Journalist
+  | 'mentions'              // Article/Post mentions Entity
+  | 'covers'                // NewsSource covers Topic/Market
+  | 'cited_by'              // Entity cited by Article
+  | 'broke_story'           // Journalist/Source broke a story
+  | 'corroborated_by'       // Claim corroborated by Source
+  | 'contradicts'           // Claim contradicts another Claim/Entity
+  | 'reacted_to'            // Entity reacted to Event/News
+  | 'disclosed'             // Entity disclosed information
+  | 'filed'                 // Entity filed Lawsuit/Patent/Report
+  | 'announced'             // Entity announced Event/Merger/IPO
+  | 'acquired'              // Entity acquired another Entity
+  | 'merged_with'           // Entity merged with another Entity
+
+  // ─── People & Org Relations [org-rel-001] ──────────────────────────────────
+  | 'employed_by'           // Person employed by Organisation
+  | 'leads'                 // Person leads Organisation/Fund/Team
+  | 'advises'               // Person advises Entity
+  | 'invests_in'            // Fund/Person invests in Entity
+  | 'regulates'             // Regulator regulates Entity
+  | 'audits'                // Auditor audits Entity
+  | 'partners_with'         // Entity partners with another Entity
+  | 'competes_with'         // Entity competes with another Entity
+  | 'funds'                 // Entity funds another Entity/Project
+  | 'created_by'            // Entity created by Person/Organisation
+  | 'endorsed_by'           // Entity endorsed by Person/Organisation
+  | 'criticised_by'         // Entity criticised by Person/Source
+  | 'sanctioned_by'         // Entity sanctioned by Regulator/Government
+  | 'investigated_by'       // Entity investigated by Regulator/Authority
+
+  // ─── Crypto / DeFi [crypto-rel-001] ─────────────────────────────────────────
+  | 'deployed_on'           // SmartContract deployed on Blockchain
+  | 'transacted_with'       // CryptoWallet transacted with another Wallet
+  | 'holds_token'           // Wallet holds Token/Asset
+  | 'staked_in'             // Wallet staked in Protocol
+  | 'liquidated_by'         // Position liquidated by Protocol/Event
+  | 'bridged_to'            // Asset bridged to another Blockchain
+
+  // ─── Research & Model [research-rel-001] ─────────────────────────────────────
+  | 'derived_from'          // Model/Signal derived from Dataset/Model
+  | 'trained_on'            // Model trained on Dataset
+  | 'predicts_outcome'      // Model predicts outcome for Entity
+  | 'validates'             // Data/Model validates Hypothesis/Signal
+  | 'refutes'               // Data/Model refutes Hypothesis/Signal
+
+  // ─── Generic / catch-all ─────────────────────────────────────────────────────
+  | 'linked_to'             // Generic unclassified link
+  | 'same_as';              // Entity identity equivalence (owl:sameAs)
 
 export type Regime = 'normal' | 'stressed' | 'pre_tipping' | 'post_event';
 
