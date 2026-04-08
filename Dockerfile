@@ -14,5 +14,5 @@ COPY --from=builder /app/dist ./dist
 COPY package*.json ./
 RUN npm ci --omit=dev
 EXPOSE 3000
-# Rebuild trigger Mon Apr 06 18:30:00 UTC 2026 - cache bust
+# Rebuild trigger Wed Apr 08 01:45:00 UTC 2026 - healthcheck fix
 CMD ["node", "dist/server.js"]
