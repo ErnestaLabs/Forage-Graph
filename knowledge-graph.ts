@@ -255,6 +255,7 @@ export type EntityType =
   | 'Signal'               // Intelligence signal or market signal
   | 'Revelation'           // Synthesised insight (Oracle output)
   | 'Sentiment'            // Aggregate mood or opinion
+  | 'Topic'               // Subject, theme, or area of discourse
   | 'Culture'              // Shared cultural system
   | 'Language'             // Natural language
   | 'Religion'             // Religious system
